@@ -10,20 +10,25 @@
 
 class WiFiConnection
 {
+  
   public:
+    // Structure to store connection information
     struct CONNECTION{
-        const char* ssid;
-        const char* password;
-    }
+      const char* ssid;
+      const char* password;
+    };
+    // We will allow for a maximum of 8 wifi networks.
+    static const int MAX_CONNECTIONS = 8;
 
     // Setup and manage connections
     WiFiConnection();
     bool add(const CONNECTION conn);
+    bool add(const char* ssid, const char* password);
     //void remove(const char* ssid);
     //void promote(const char* ssid);
     //void demote(const char* ssid);
     //void save(File f);
-    //void load(File f);
+    void load(const char* filename);
 
     // Access connection data.
     void resetTryConnections();     // Resets the next connection to the first.
@@ -31,8 +36,7 @@ class WiFiConnection
     CONNECTION getNext();           // Get the next connection to try.
 
   private:
-    // We will allow for a maximum of 8 wifi networks.
-    const int MAX_CONNECTIONS = 8;
+    
     // Stores the connection information
     CONNECTION _connections[MAX_CONNECTIONS];
     int _connection_count = 0; // Current number of connections stored.

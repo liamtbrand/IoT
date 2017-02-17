@@ -22,6 +22,36 @@ bool WiFiConnection::add(const CONNECTION conn)
   return false;
 }
 
+bool WiFiConnection::add(const char* ssid, const char* password)
+{
+  CONNECTION conn;
+  conn.ssid = ssid;
+  conn.password = password;
+  add(conn);
+}
+
+void WiFiConnection::load(const char* filename)
+{
+  /*
+  File f;
+  if(SPIFFS.exists(filename)){
+    f = SPIFFS.open(filename,"r");
+    _connection_count = 0;
+
+    while(f.available()){
+      _CONNECTIONS[_CONNECTION_COUNT].ssid = f.readStringUntil('\n');
+      _CONNECTIONS[_CONNECTION_COUNT].password = f.readStringUntil('\n');
+      _CONNECTION_COUNT++;
+    }
+    
+  }else{
+    f = SPIFFS.open(CONNECTIONS_FILE,"w+");
+  }
+  
+  f.close();
+  */
+}
+
 void WiFiConnection::resetTryConnections()
 {
   _try_connection = 0;
@@ -32,7 +62,7 @@ bool WiFiConnection::hasNext()
   return _try_connection < _connection_count;
 }
 
-CONNECTION WiFiConnection::getNext()
+WiFiConnection::CONNECTION WiFiConnection::getNext()
 {
   _try_connection++;
   return _connections[_try_connection-1];

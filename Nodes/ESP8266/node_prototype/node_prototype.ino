@@ -14,6 +14,7 @@
  */
 
 #include <ESP8266WiFi.h>
+#include "WiFiConnection.h"
 #include "FS.h"
 
 // ---- SETTINGS ----
@@ -25,6 +26,10 @@ const char* WIFI_AP_PASSWORD = "IoT Setup";
 
 const char* CONFIG_FILE = "/config.txt";
 const char* CONNECTIONS_FILE = "/connections.txt";
+
+// ---- GLOBAL VARIABLES ----
+
+WiFiConnection connections;
 
 // ---- SERVER FUNCTIONS ----
 
@@ -38,6 +43,7 @@ void hostWiFi(){
 }
 
 void serverSetup(){
+  
   hostWiFi();
 
   /*
@@ -52,57 +58,6 @@ void serverSetup(){
 
 void serverLoop(){
   
-}
-
-// ---- WIFI CONNECTION INFORMATION ----
-
-struct WIFI_CONNECTION{
-  const char* ssid;
-  const char* password;
-};
-
-// The maximum number of wifi networks we will try use.
-const int MAX_CONNECTIONS = 20;
-
-// Array containing the connection information for wifi
-// networks we will try to connect to.
-WIFI_CONNECTION _CONNECTIONS[8];
-_CONNECTION_COUNT = 0;
-
-/**
- * This function will add a wifi connection to the list
- * of connections we will try to connect to.
- */
-void addConnection(char* ssid, char* password){
-  if(connection_no < MAX_CONNECTIONS){
-    connections[connection_no].ssid = ssid;
-    connections[connection_no].password = password;
-    connection_no++;
-  }
-}
-
-/**
- * Loads the connection information for all preferred wifi connections.
- */
-void loadConnections(){
-  
-  File f;
-  
-  if(SPIFFS.exists(CONNECTIONS_FILE)){
-    f = SPIFFS.open(CONNECTIONS_FILE,"r");
-    _CONNECTION_COUNT = 0;
-
-    while(f.available()){
-      _CONNECTIONS[_CONNECTION_COUNT].ssid = f.readStringUntil('\n');
-      _CONNECTIONS[_CONNECTION_COUNT].password = f.readStringUntil('\n');
-      _CONNECTION_COUNT++;
-    }
-    
-  }else{
-    f = SPIFFS.open(CONNECTIONS_FILE,"w+");
-  }
-  
-  f.close();
 }
 
 // Data structures
@@ -180,14 +135,6 @@ void sendHubData(void){
   
 }
 
-struct auth{
-  const char* ssid;
-  const char* password;
-};
-
-int connection_no = 0;
-auth connections[MAX_CONNECTIONS];
-
 int networks_found = 0;
 
 void setup(void) {
@@ -199,7 +146,8 @@ void setup(void) {
   randomSeed(analogRead(0));
   delay(2000);
 
-  loadConnections();
+  // Load in any stored connections.
+  connections.load(CONNECTIONS_FILE);
 
   serverSetup();
   /*
@@ -273,7 +221,7 @@ void scanWiFi(void){
 void connectWiFi(void){
 
   int tries = 0;
-
+/*
   for(int n = 0; n < networks_found && WiFi.status() != WL_CONNECTED; ++n){
     for(int i = 0; i < MAX_CONNECTIONS && WiFi.status() != WL_CONNECTED; ++i){
       if(WiFi.SSID(n) == connections[i].ssid){ //if we know the network, try connect.
@@ -317,6 +265,8 @@ void connectWiFi(void){
     }
     Serial.println("Unable to establish a WiFi connection.");
   }
+
+  */
 
 }
 

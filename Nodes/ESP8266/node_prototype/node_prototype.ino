@@ -13,8 +13,97 @@
  * 
  */
 
-
 #include <ESP8266WiFi.h>
+#include "FS.h"
+
+// ---- SETTINGS ----
+
+const int SERIAL_BAUDRATE = 115200; //9600?
+
+const char* WIFI_AP_SSID = "ESP8266 IoT Setup";
+const char* WIFI_AP_PASSWORD = "IoT Setup";
+
+const char* CONFIG_FILE = "/config.txt";
+const char* CONNECTIONS_FILE = "/connections.txt";
+
+// ---- SERVER FUNCTIONS ----
+
+void hostWiFi(){
+  Serial.println("Starting WiFi Access Point...");
+  delay(1000);
+  WiFi.softAP(WIFI_AP_SSID,WIFI_AP_PASSWORD);
+  IPAddress myIP = WiFi.softAPIP();
+  Serial.print("AP IP Address: ");
+  Serial.println(myIP);
+}
+
+void serverSetup(){
+  hostWiFi();
+
+  /*
+  SPIFFS.format(); //TODO make some test to verify this.
+  SPIFFS.begin();
+
+  config_file = SPIFFS.open(CONFIG_FILE,"w+");
+
+  SPIFFS.end();
+  */
+}
+
+void serverLoop(){
+  
+}
+
+// ---- WIFI CONNECTION INFORMATION ----
+
+struct WIFI_CONNECTION{
+  const char* ssid;
+  const char* password;
+};
+
+// The maximum number of wifi networks we will try use.
+const int MAX_CONNECTIONS = 20;
+
+// Array containing the connection information for wifi
+// networks we will try to connect to.
+WIFI_CONNECTION _CONNECTIONS[8];
+_CONNECTION_COUNT = 0;
+
+/**
+ * This function will add a wifi connection to the list
+ * of connections we will try to connect to.
+ */
+void addConnection(char* ssid, char* password){
+  if(connection_no < MAX_CONNECTIONS){
+    connections[connection_no].ssid = ssid;
+    connections[connection_no].password = password;
+    connection_no++;
+  }
+}
+
+/**
+ * Loads the connection information for all preferred wifi connections.
+ */
+void loadConnections(){
+  
+  File f;
+  
+  if(SPIFFS.exists(CONNECTIONS_FILE)){
+    f = SPIFFS.open(CONNECTIONS_FILE,"r");
+    _CONNECTION_COUNT = 0;
+
+    while(f.available()){
+      _CONNECTIONS[_CONNECTION_COUNT].ssid = f.readStringUntil('\n');
+      _CONNECTIONS[_CONNECTION_COUNT].password = f.readStringUntil('\n');
+      _CONNECTION_COUNT++;
+    }
+    
+  }else{
+    f = SPIFFS.open(CONNECTIONS_FILE,"w+");
+  }
+  
+  f.close();
+}
 
 // Data structures
 
@@ -96,22 +185,13 @@ struct auth{
   const char* password;
 };
 
-const int MAX_CONNECTIONS = 20;
-
 int connection_no = 0;
 auth connections[MAX_CONNECTIONS];
-
-void addConnection(char* ssid, char* password){
-  if(connection_no < MAX_CONNECTIONS){
-    connections[connection_no].ssid = ssid;
-    connections[connection_no].password = password;
-    connection_no++;
-  }
-}
 
 int networks_found = 0;
 
 void setup(void) {
+  
   Serial.begin(9600);
   //Serial.println("AT+RST");
   Serial.println("ESP8266");
@@ -119,11 +199,17 @@ void setup(void) {
   randomSeed(analogRead(0));
   delay(2000);
 
+  loadConnections();
+
+  serverSetup();
+  /*
+
   //add all the known WiFi authentication data.
 
   addConnection("Liam's iPhone","derpderp");
   addConnection("Jeroen's Wi-Fi Network","F6C461617D");
   addConnection(".","F6C461617D");
+  */
 }
 
 void tryToConnectWiFi(void){
@@ -133,6 +219,8 @@ void tryToConnectWiFi(void){
  
 void loop(void) {
 
+  serverLoop();
+/*
   while(WiFi.status() != WL_CONNECTED) {
     tryToConnectWiFi();
     if(WiFi.status() != WL_CONNECTED) {
@@ -150,6 +238,7 @@ void loop(void) {
 
   connectToHub();
   sendHubData();
+  */
   
 }
 

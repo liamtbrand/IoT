@@ -27,8 +27,8 @@ bool WiFiConnection::add(const CONNECTION conn)
 bool WiFiConnection::add(const char* ssid, const char* password)
 {
   CONNECTION conn;
-  conn.ssid = ssid;
-  conn.password = password;
+  strcpy(conn.ssid,ssid);
+  strcpy(conn.password,password);
   add(conn);
 }
 
@@ -41,8 +41,8 @@ void WiFiConnection::remove(const char* ssid)
 
   // Copy all allowed data to temporary list.
   for(int i = 0; i < _connection_count; ++i){
-    if(_connection[i].ssid != ssid){
-      conns[ptr] = _connection[i];
+    if(_connections[i].ssid != ssid){
+      conns[ptr] = _connections[i];
       ptr++;
     }
   }
@@ -50,7 +50,7 @@ void WiFiConnection::remove(const char* ssid)
   // Rewrite data.
   _connection_count = ptr;
   for(int i = 0; i < ptr; ++i){
-    _connection[i] = conns[i];
+    _connections[i] = conns[i];
   }
 
   save();
@@ -58,40 +58,79 @@ void WiFiConnection::remove(const char* ssid)
 
 void WiFiConnection::save()
 {
+  Serial.println("Saving...");
   File f;
-  f = SPIFFS.open(_save_filename,"w+");
+  SPIFFS.begin();
+  f = SPIFFS.open(_save_filename,"w");
+  if(!f) Serial.println("Error opening file to write..");
+  else{
 
-  CONNECTION conn;
-
-  resetTryConnections();
-  while(hasNext()){
-    conn = getNext();
-    f.write(conn.ssid);
-    f.write(conn.password);
+    //Serial.println("Saving connection settings...");
+  
+    resetTryConnections();
+    while(hasNext()){
+      CONNECTION conn;
+      conn = getNext();
+      f.print(conn.ssid);
+      f.print('\n');
+      f.print(conn.password);
+      f.print('\n');
+      Serial.print("Saving record: ");
+      Serial.print(conn.ssid);
+      Serial.print(":");
+      Serial.println(conn.password);
+      //Serial.println("Saved record:");
+      //Serial.println(conn.ssid);
+    }
+  
   }
-
   f.close();
+  SPIFFS.end();
 }
 
 void WiFiConnection::load()
 {
-
+  Serial.println("Loading...");
+  Serial.println(_save_filename);
   File f;
+  SPIFFS.begin();
+  
   if(SPIFFS.exists(_save_filename)){
     f = SPIFFS.open(_save_filename,"r");
-    _connection_count = 0;
+    if(!f){
+      Serial.println("Error opening file for read...");
+    }else{
+      _connection_count = 0;
+      const int buff_size = 128;
+      char buff[buff_size] = "";
+      int len;
 
-    while(f.available()){
-      _connections[_connection_count].ssid = f.readStringUntil('\n');
-      _connections[_connection_count].password = f.readStringUntil('\n');
-      _connection_count++;
+      while(f.available()){
+
+        CONNECTION conn;
+
+        len = f.readBytesUntil('\n',buff,buff_size);
+        buff[len] = '\0';
+        strcpy(conn.ssid,buff);
+
+        len = f.readBytesUntil('\n',buff,buff_size);
+        buff[len] = '\0';
+        strcpy(conn.password,buff);
+
+        _connections[_connection_count] = conn;
+        _connection_count++;
+        
+      }
+      
     }
 
   }else{
+    Serial.println("Connection save file doesn't exist.");
     f = SPIFFS.open(_save_filename,"w+");
   }
 
   f.close();
+  SPIFFS.end();
 
 }
 
@@ -118,8 +157,9 @@ int WiFiConnection::count()
 
 void WiFiConnection::list()
 {
+  Serial.println("List APs:");
   for(int i = 0; i < _connection_count; ++i){
     Serial.print(_connections[i].ssid);
-    Serial.print(":******");
+    Serial.println(":******");
   }
 }

@@ -13,9 +13,10 @@ class WiFiConnection
 
   public:
     // Structure to store connection information
+    static const int MAX_STRLEN = 128;
     struct CONNECTION{
-      const char* ssid;
-      const char* password;
+      char ssid[MAX_STRLEN];
+      char password[MAX_STRLEN];
     };
     // We will allow for a maximum of 8 wifi networks.
     static const int MAX_CONNECTIONS = 8;
@@ -40,7 +41,7 @@ class WiFiConnection
     void list();
 
   private:
-    char* _save_filename = "";
+    const char* _save_filename = "";
     // Stores the connection information
     CONNECTION _connections[MAX_CONNECTIONS];
     int _connection_count = 0; // Current number of connections stored.

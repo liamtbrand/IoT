@@ -40,6 +40,8 @@ bool INITIALIZED = false;
 
 unsigned long last_try_connect = 0;
 
+WiFiServer server(80);
+
 // ---- SERVER FUNCTIONS ----
 
 void hostWiFi(){
@@ -105,7 +107,10 @@ void sendHubData(void){
   Serial.println("----------------");
 
   //send the request.
-  client.println(request);
+
+  /*
+
+  if(client.available()) client.println(request);
 
   unsigned long timeout = millis();
   while (client.available() == 0) {
@@ -123,6 +128,7 @@ void sendHubData(void){
   }
   Serial.println("");
   Serial.println("----------------");
+  */
 
 }
 
@@ -164,15 +170,27 @@ void scanWiFi(void){
 void connectWiFi(void){
 
   int tries = 0;
+  connections.resetTryConnections();
+  WiFiConnection::CONNECTION conn;
 
-  for(int n = 0; n < networks_found && WiFi.status() != WL_CONNECTED; ++n){
-    for(int i = 0; i < MAX_CONNECTIONS && WiFi.status() != WL_CONNECTED; ++i){
-      if(WiFi.SSID(n) == connections[i].ssid){ //if we know the network, try connect.
+  while(connections.hasNext() && WiFi.status() != WL_CONNECTED){
+
+    conn = connections.getNext();
+    
+    for(int n = 0; n < networks_found && WiFi.status() != WL_CONNECTED; ++n){
+
+      //Serial.print("Checking: ");
+      //Serial.println(conn.ssid);
+
+      //Serial.print("Against: ");
+      //Serial.println(WiFi.SSID(n).c_str());
+      
+      if(strcmp(WiFi.SSID(n).c_str(),conn.ssid) == 0){ //if we know the network, try connect.
 
         Serial.print("Connecting to: ");
-        Serial.println(connections[i].ssid);
+        Serial.println(conn.ssid);
         WiFi.mode(WIFI_STA);
-        WiFi.begin(connections[i].ssid,connections[i].password);
+        WiFi.begin(conn.ssid,conn.password);
         ++tries;
 
         //wait 10s for connection
@@ -188,7 +206,7 @@ void connectWiFi(void){
 
         if(WiFi.status() != WL_CONNECTED){
           Serial.print("Connection to ");
-          Serial.print(connections[i].ssid);
+          Serial.print(conn.ssid);
           Serial.println(" failed.");
         }
 
@@ -214,17 +232,28 @@ void connectWiFi(void){
 // ---- SETUP CODE ----
 
 void setupInit(void){
+
+  Serial.println("Setup Init");
+  
   hostWiFi();
   last_try_connect = millis();
+
+  INITIALIZED = true;
 }
 
 void setupLoop(void){
+
+  Serial.println("Setup Loop");
+  
   // AP phase should last 120 seconds,
   // Then we should try again to connect to WiFi.
-  if(millis() - last_try_connect > 120000){
+  if(millis() - last_try_connect > 20000){ // TODO change back to 120.. 20 for testing.
     if(connections.count() > 0){
+      Serial.println("Switching to Node Mode.");
       MODE = NODE;
       INITIALIZED = false;
+    }else{
+      Serial.println("No known APs, please create one.");
     }
   }
 
@@ -235,9 +264,18 @@ void setupLoop(void){
 // ---- NODE CODE ----
 
 void nodeInit(void){
+
+  Serial.println("Node Init");
+
+  if(connections.count() == 0){
+    INITIALIZED = false;
+    MODE = SETUP;
+    return; // Exit early, cause no point trying to connect.
+  }
+  
   int max_attempts = 3;
   int attempt = 0;
-  while(WiFi.status() != WL_CONNECTED && attempt < max_attampts) {
+  while(WiFi.status() != WL_CONNECTED && attempt < max_attempts) {
     tryToConnectWiFi();
     if(WiFi.status() != WL_CONNECTED) {
       Serial.println("Waiting 10s before trying again...");
@@ -256,6 +294,9 @@ void nodeInit(void){
 }
 
 void nodeLoop(void){
+
+  Serial.println("Node Loop");
+  
   if(WiFi.status() != WL_CONNECTED){
     INITIALIZED = false; // We will try to reconnect.
   }
@@ -282,9 +323,13 @@ void setup(void) {
   randomSeed(analogRead(0));
   delay(2000);
 
+  // Reset all connections...
+  connections.save();
+
   // Load in any stored connections.
+  //connections.add("Liam's iPhone","derpderp");
+  //connections.add("SPARK-8GAY6T","TZXFK93XZC");
   connections.load();
-  connections.add("Liam's iPhone","derpderp");
   connections.list();
 
   // If we have a network we know,
@@ -297,12 +342,12 @@ void setup(void) {
 
 void loop(void) {
 
-  if(MODE = NODE){
+  if(MODE == NODE){
 
     if(INITIALIZED == false) nodeInit();
     if(INITIALIZED == true) nodeLoop();
 
-  }else if(MODE = SETUP){
+  }else if(MODE == SETUP){
 
     if(INITIALIZED == false) setupInit();
     if(INITIALIZED == true) setupLoop();

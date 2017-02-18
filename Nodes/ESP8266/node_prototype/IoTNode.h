@@ -6,22 +6,37 @@
 #define IoTNode_h
 
 #include "Arduino.h"
+#include "WiFiConnection.h"
 
 class IoTNode
 {
 
   public:
-    IoTNode();
+    IoTNode(const char* APs_file,const char* AP_ssid, const char* AP_pass);
 
-    WiFiConnection connections("/connections.txt");
+    WiFiConnection _APs;
+
+    void scanWiFi();
+    void connectWiFi();
+
+    void runInit();
+    void runLoop();
+
+    void setupInit();
+    void setupLoop();
 
     void setup();
     void loop();
 
   private:
-    int _SETUP = 0;
-    int _RUN = 1;
-    _mode = _RUN; // Try run mode first.
+    const int _SETUP = 0;
+    const int _RUN = 1;
+    int _mode;
+    int _initialized;
+    unsigned long _last_try_connect;
+    const char* _AP_ssid;
+    const char* _AP_pass;
+    int _networks_found = 0;
 
 };
 

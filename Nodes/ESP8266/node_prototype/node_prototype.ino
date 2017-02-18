@@ -27,6 +27,8 @@ const char* WIFI_AP_PASSWORD = "IoT Setup";
 const char* CONFIG_FILE = "/config.txt";
 const char* CONNECTIONS_FILE = "/connections.txt";
 
+IoTNode node;
+
 // Node Modes
 const int SETUP = 0;
 const int NODE = 1;
@@ -176,7 +178,7 @@ void connectWiFi(void){
   while(connections.hasNext() && WiFi.status() != WL_CONNECTED){
 
     conn = connections.getNext();
-    
+
     for(int n = 0; n < networks_found && WiFi.status() != WL_CONNECTED; ++n){
 
       //Serial.print("Checking: ");
@@ -184,7 +186,7 @@ void connectWiFi(void){
 
       //Serial.print("Against: ");
       //Serial.println(WiFi.SSID(n).c_str());
-      
+
       if(strcmp(WiFi.SSID(n).c_str(),conn.ssid) == 0){ //if we know the network, try connect.
 
         Serial.print("Connecting to: ");
@@ -234,7 +236,7 @@ void connectWiFi(void){
 void setupInit(void){
 
   Serial.println("Setup Init");
-  
+
   hostWiFi();
   last_try_connect = millis();
 
@@ -244,7 +246,7 @@ void setupInit(void){
 void setupLoop(void){
 
   Serial.println("Setup Loop");
-  
+
   // AP phase should last 120 seconds,
   // Then we should try again to connect to WiFi.
   if(millis() - last_try_connect > 20000){ // TODO change back to 120.. 20 for testing.
@@ -272,7 +274,7 @@ void nodeInit(void){
     MODE = SETUP;
     return; // Exit early, cause no point trying to connect.
   }
-  
+
   int max_attempts = 3;
   int attempt = 0;
   while(WiFi.status() != WL_CONNECTED && attempt < max_attempts) {
@@ -296,7 +298,7 @@ void nodeInit(void){
 void nodeLoop(void){
 
   Serial.println("Node Loop");
-  
+
   if(WiFi.status() != WL_CONNECTED){
     INITIALIZED = false; // We will try to reconnect.
   }

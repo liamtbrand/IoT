@@ -3,14 +3,14 @@
  * Date: 10/01/2017
  * Author: Liam Brand
  * Description:
- * 
+ *
  * This software is designed to run on the ESP8266.
  * NodeMCU 1.0 (ESP-12E Module), 80MHz
  * 9600 baud
- * 
+ *
  * This software will send random values to the EnergyMonitor.
  * This project is currently in prototype.
- * 
+ *
  */
 
 #include <ESP8266WiFi.h>
@@ -27,9 +27,18 @@ const char* WIFI_AP_PASSWORD = "IoT Setup";
 const char* CONFIG_FILE = "/config.txt";
 const char* CONNECTIONS_FILE = "/connections.txt";
 
+// Node Modes
+const int SETUP = 0;
+const int NODE = 1;
+
 // ---- GLOBAL VARIABLES ----
 
-WiFiConnection connections;
+WiFiConnection connections(CONNECTIONS_FILE);
+
+int MODE = SETUP;
+bool INITIALIZED = false;
+
+unsigned long last_try_connect = 0;
 
 // ---- SERVER FUNCTIONS ----
 
@@ -40,24 +49,6 @@ void hostWiFi(){
   IPAddress myIP = WiFi.softAPIP();
   Serial.print("AP IP Address: ");
   Serial.println(myIP);
-}
-
-void serverSetup(){
-  
-  hostWiFi();
-
-  /*
-  SPIFFS.format(); //TODO make some test to verify this.
-  SPIFFS.begin();
-
-  config_file = SPIFFS.open(CONFIG_FILE,"w+");
-
-  SPIFFS.end();
-  */
-}
-
-void serverLoop(){
-  
 }
 
 // Data structures
@@ -97,7 +88,7 @@ void sendHubData(void){
   data += "current_power_generation=" + String(random_sample.generation) + "&";
   data += "current_power_consumption=" + String(random_sample.consumption) + "&";
   data += "id=" + String(1);
-  
+
   String nl = "\r\n";
 
   String request = "";
@@ -132,62 +123,14 @@ void sendHubData(void){
   }
   Serial.println("");
   Serial.println("----------------");
-  
+
 }
 
 int networks_found = 0;
 
-void setup(void) {
-  
-  Serial.begin(9600);
-  //Serial.println("AT+RST");
-  Serial.println("ESP8266");
-  Serial.println("I support 2.4GHz Wireless... FYI.");
-  randomSeed(analogRead(0));
-  delay(2000);
-
-  // Load in any stored connections.
-  connections.load(CONNECTIONS_FILE);
-
-  serverSetup();
-  /*
-
-  //add all the known WiFi authentication data.
-
-  addConnection("Liam's iPhone","derpderp");
-  addConnection("Jeroen's Wi-Fi Network","F6C461617D");
-  addConnection(".","F6C461617D");
-  */
-}
-
 void tryToConnectWiFi(void){
   scanWiFi();
   connectWiFi();
-}
- 
-void loop(void) {
-
-  serverLoop();
-/*
-  while(WiFi.status() != WL_CONNECTED) {
-    tryToConnectWiFi();
-    if(WiFi.status() != WL_CONNECTED) {
-      Serial.println("Waiting 10s before trying again...");
-      delay(10000);
-    }
-  }
-  
-  Serial.println("tick");
-  delay(1000);
-  Serial.println("tock");
-  delay(1000);
-  Serial.println("Waiting...");
-  delay(3000);
-
-  connectToHub();
-  sendHubData();
-  */
-  
 }
 
 void scanWiFi(void){
@@ -221,11 +164,11 @@ void scanWiFi(void){
 void connectWiFi(void){
 
   int tries = 0;
-/*
+
   for(int n = 0; n < networks_found && WiFi.status() != WL_CONNECTED; ++n){
     for(int i = 0; i < MAX_CONNECTIONS && WiFi.status() != WL_CONNECTED; ++i){
       if(WiFi.SSID(n) == connections[i].ssid){ //if we know the network, try connect.
-        
+
         Serial.print("Connecting to: ");
         Serial.println(connections[i].ssid);
         WiFi.mode(WIFI_STA);
@@ -248,7 +191,7 @@ void connectWiFi(void){
           Serial.print(connections[i].ssid);
           Serial.println(" failed.");
         }
-        
+
       }
     }
   }
@@ -266,7 +209,106 @@ void connectWiFi(void){
     Serial.println("Unable to establish a WiFi connection.");
   }
 
-  */
+}
+
+// ---- SETUP CODE ----
+
+void setupInit(void){
+  hostWiFi();
+  last_try_connect = millis();
+}
+
+void setupLoop(void){
+  // AP phase should last 120 seconds,
+  // Then we should try again to connect to WiFi.
+  if(millis() - last_try_connect > 120000){
+    if(connections.count() > 0){
+      MODE = NODE;
+      INITIALIZED = false;
+    }
+  }
+
+  Serial.println("Waiting for connections...");
+  delay(10000);
+}
+
+// ---- NODE CODE ----
+
+void nodeInit(void){
+  int max_attempts = 3;
+  int attempt = 0;
+  while(WiFi.status() != WL_CONNECTED && attempt < max_attampts) {
+    tryToConnectWiFi();
+    if(WiFi.status() != WL_CONNECTED) {
+      Serial.println("Waiting 10s before trying again...");
+      delay(10000);
+    }else{
+      // Success
+      INITIALIZED = true;
+      break;
+    }
+    ++attempt;
+  }
+
+  if(INITIALIZED == false){
+    MODE = SETUP;
+  }
+}
+
+void nodeLoop(void){
+  if(WiFi.status() != WL_CONNECTED){
+    INITIALIZED = false; // We will try to reconnect.
+  }
+
+  Serial.println("tick");
+  delay(1000);
+  Serial.println("tock");
+  delay(1000);
+  Serial.println("Waiting...");
+  delay(3000);
+
+  connectToHub();
+  sendHubData();
+}
+
+// ---- MAIN CODE ----
+
+void setup(void) {
+
+  Serial.begin(9600);
+  //Serial.println("AT+RST");
+  Serial.println("ESP8266");
+  Serial.println("I support 2.4GHz Wireless... FYI.");
+  randomSeed(analogRead(0));
+  delay(2000);
+
+  // Load in any stored connections.
+  connections.load();
+  connections.add("Liam's iPhone","derpderp");
+  connections.list();
+
+  // If we have a network we know,
+  // We should be in node mode.
+  if(connections.count() > 0){
+    MODE = NODE;
+  }
 
 }
 
+void loop(void) {
+
+  if(MODE = NODE){
+
+    if(INITIALIZED == false) nodeInit();
+    if(INITIALIZED == true) nodeLoop();
+
+  }else if(MODE = SETUP){
+
+    if(INITIALIZED == false) setupInit();
+    if(INITIALIZED == true) setupLoop();
+
+  }else{
+    //ERRORS
+  }
+
+}

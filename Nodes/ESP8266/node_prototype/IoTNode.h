@@ -10,11 +10,10 @@
 
 class IoTNode
 {
-
   public:
-    IoTNode(const char* APs_file,const char* AP_ssid, const char* AP_pass);
+    IoTNode(const char* APs_file, const char* AP_ssid, const char* AP_pass);
 
-    WiFiConnection _APs;
+    WiFiConnection _APs = WiFiConnection("/connections.txt");
 
     void scanWiFi();
     void connectWiFi();

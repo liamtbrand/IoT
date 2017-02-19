@@ -28,7 +28,7 @@ const char* WIFI_AP_PASSWORD = "IoT Setup";
 const char* CONFIG_FILE = "/config.txt";
 const char* CONNECTIONS_FILE = "/connections.txt";
 
-IoTNode node;
+IoTNode node(CONNECTIONS_FILE,WIFI_AP_SSID,WIFI_AP_PASSWORD);
 
 // ---- SERVER FUNCTIONS ----
 
@@ -121,8 +121,6 @@ void setup(void) {
   Serial.println("I support 2.4GHz Wireless... FYI.");
   randomSeed(analogRead(0));
   delay(2000);
-
-  node = IoTNode::IoTNode(CONNECTIONS_FILE);
 
   node.setup();
 }

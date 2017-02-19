@@ -1,7 +1,16 @@
+/*
+  IoTNode.h - Node for IoT ESP8266
+  Created by Liam T. Brand, February 18, 2017.
+*/
+#include "Arduino.h"
+#include "IoTNode.h"
+#include "WiFiConnection.h"
+#include <ESP8266WiFi.h>
+
 IoTNode::IoTNode(const char* APs_file, const char* AP_ssid, const char* AP_pass)
 {
   // File containing Access Point Authentication Data.
-  _APs = WiFiConnection::WiFiConnection(APs_file);
+  _APs = WiFiConnection(APs_file);
   _mode = _SETUP;
   _initialized = false;
   _last_try_connect = 0;
@@ -9,7 +18,7 @@ IoTNode::IoTNode(const char* APs_file, const char* AP_ssid, const char* AP_pass)
   _AP_pass = AP_pass;
 }
 
-IoTNode::scanWiFi(void)
+void IoTNode::scanWiFi(void)
 {
   Serial.println("Scanning WiFi networks...");
 
@@ -38,7 +47,7 @@ IoTNode::scanWiFi(void)
   Serial.println("");
 }
 
-IoTNode::connectWiFi(void)
+void IoTNode::connectWiFi(void)
 {
   int tries = 0;
   _APs.resetTryConnections();
@@ -46,9 +55,9 @@ IoTNode::connectWiFi(void)
 
   while(_APs.hasNext() && WiFi.status() != WL_CONNECTED){
 
-    conn = connections.getNext();
+    conn = _APs.getNext();
 
-    for(int n = 0; n < networks_found && WiFi.status() != WL_CONNECTED; ++n){
+    for(int n = 0; n < _networks_found && WiFi.status() != WL_CONNECTED; ++n){
 
       //Serial.print("Checking: ");
       //Serial.println(conn.ssid);
@@ -100,7 +109,7 @@ IoTNode::connectWiFi(void)
 
 }
 
-IoTNode::runInit()
+void IoTNode::runInit()
 {
   Serial.println("Node Init");
 
@@ -131,7 +140,7 @@ IoTNode::runInit()
   }
 }
 
-IoTNode::runLoop()
+void IoTNode::runLoop()
 {
   Serial.println("Node Loop");
 
@@ -150,7 +159,7 @@ IoTNode::runLoop()
   //sendHubData();
 }
 
-IotNode::setupInit()
+void IoTNode::setupInit()
 {
   Serial.println("Setup Init");
 
@@ -166,7 +175,7 @@ IotNode::setupInit()
   _initialized = true;
 }
 
-IoTNode::setupLoop()
+void IoTNode::setupLoop()
 {
   Serial.println("Setup Loop");
 
@@ -186,11 +195,11 @@ IoTNode::setupLoop()
   delay(1000);
 }
 
-IoTNode::setup()
+void IoTNode::setup()
 {
   // Load in any stored connections.
-  //connections.add("Liam's iPhone","derpderp");
-  //connections.add("SPARK-8GAY6T","TZXFK93XZC");
+  //_APs.add("Liam's iPhone","derpderp");
+  //_APs.add("SPARK-8GAY6T","TZXFK93XZC");
   _APs.load();
   _APs.list();
 
@@ -201,19 +210,19 @@ IoTNode::setup()
   }
 }
 
-IoTNode::loop()
+void IoTNode::loop()
 {
   switch(_mode){
 
-    case _RUN:
+    case 1: // _RUN
       if(_initialized == false) runInit();
       if(_initialized == true) runLoop();
       break;
 
-    case _SETUP:
+    case 0: // _SETUP
       if(_initialized == false) setupInit();
       if(_initialized == true) setupLoop();
-      break
+      break;
 
     default:
       Serial.println("Error in node switch.");

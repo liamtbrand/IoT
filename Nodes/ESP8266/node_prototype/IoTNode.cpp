@@ -6,11 +6,14 @@
 #include "IoTNode.h"
 #include "WiFiConnection.h"
 #include <ESP8266WiFi.h>
+#include "HubAPI.h"
 
 IoTNode::IoTNode(const char* APs_file, const char* AP_ssid, const char* AP_pass)
 {
   // File containing Access Point Authentication Data.
   _APs = WiFiConnection(APs_file);
+  _HubAPI = HubAPI("localhost",9999);
+  _HubAPI.connect();
   _mode = _SETUP;
   _initialized = false;
   _last_try_connect = 0;
@@ -142,18 +145,14 @@ void IoTNode::runInit()
 
 void IoTNode::runLoop()
 {
-  Serial.println("Node Loop");
 
   if(WiFi.status() != WL_CONNECTED){
     _initialized = false; // We will try to reconnect.
   }
 
-  Serial.println("tick");
-  delay(1000);
-  Serial.println("tock");
-  delay(1000);
-  Serial.println("Waiting...");
-  delay(3000);
+  _HubAPI.loop();
+
+  delay(1);
 
   //connectToHub();
   //sendHubData();

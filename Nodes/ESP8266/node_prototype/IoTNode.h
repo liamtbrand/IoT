@@ -14,6 +14,7 @@ class IoTNode
     IoTNode(const char* APs_file, const char* AP_ssid, const char* AP_pass);
 
     WiFiConnection _APs = WiFiConnection("/connections.txt");
+    HubAPI _HubAPI = HubAPI("localhost",9999);
 
     void scanWiFi();
     void connectWiFi();

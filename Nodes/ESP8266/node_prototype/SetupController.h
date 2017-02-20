@@ -6,13 +6,13 @@
 #define SetupController_h
 
 #include "Arduino.h"
-#include "WiFiConnection"
+#include "WiFiConnection.h"
 
 class SetupController
 {
 
   public:
-    SetupController(WiFiConnection conns);
+    SetupController();
 
     void loop();
 

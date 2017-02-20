@@ -14,6 +14,8 @@ class SetupController
   public:
     SetupController(WiFiConnection conns);
 
+    void loop();
+
   private:
 
 };

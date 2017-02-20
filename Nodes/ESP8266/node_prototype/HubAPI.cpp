@@ -30,4 +30,7 @@ void HubAPI::loop()
     char c = _client.read();
     Serial.print(c);
   }
+
+  digitalWrite(_LEDPin,_value);
+
 }

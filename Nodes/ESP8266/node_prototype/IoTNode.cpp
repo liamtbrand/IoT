@@ -61,12 +61,6 @@ void IoTNode::connectWiFi(void)
 
     for(int n = 0; n < _networks_found && WiFi.status() != WL_CONNECTED; ++n){
 
-      //Serial.print("Checking: ");
-      //Serial.println(conn.ssid);
-
-      //Serial.print("Against: ");
-      //Serial.println(WiFi.SSID(n).c_str());
-
       if(strcmp(WiFi.SSID(n).c_str(),conn.ssid) == 0){ //if we know the network, try connect.
 
         Serial.print("Connecting to: ");
@@ -142,7 +136,7 @@ void IoTNode::runInit()
   }else{
 
     _HubAPI.connect();
-    
+
   }
 }
 

@@ -7,26 +7,27 @@
 #include "HubAPI.h"
 #include <ESP8266WiFi.h>
 
-HubAPI::HubAPI(const char* address, const int port)
+HubAPI::HubAPI(const char* address, int port)
 {
   _address = address;
   _port = port;
 }
 
-HubAPI::connect()
+void HubAPI::connect()
 {
-  if(!client.connect(_address,_port)){
+  Serial.println("Attempting to connect to hub...");
+  if(!_client.connect(_address,_port)){
     Serial.println("Couldn't connect to hub...");
   }else{
     Serial.println("Connected to hub successfully.");
-    client.println("Test string! Works :)");
+    _client.println("Test string! Works :)");
   }
 }
 
-HubAPI::loop()
+void HubAPI::loop()
 {
-  if (client.available()) {
-    char c = client.read();
+  if (_client.available()) {
+    char c = _client.read();
     Serial.print(c);
   }
 }

@@ -7,6 +7,7 @@
 
 #include "Arduino.h"
 #include "WiFiConnection.h"
+#include "HubAPI.h"
 
 class IoTNode
 {
@@ -14,7 +15,7 @@ class IoTNode
     IoTNode(const char* APs_file, const char* AP_ssid, const char* AP_pass);
 
     WiFiConnection _APs = WiFiConnection("/connections.txt");
-    HubAPI _HubAPI = HubAPI("localhost",9999);
+    HubAPI _HubAPI = HubAPI("192.168.1.12",9999);
 
     void scanWiFi();
     void connectWiFi();

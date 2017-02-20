@@ -6,11 +6,12 @@
 #define HubAPI_h
 
 #include "Arduino.h"
+#include <ESP8266WiFi.h>
 
 class HubAPI
 {
   public:
-    HubAPI(const char* address, const int port);
+    HubAPI(const char* address, int port);
 
     void connect();
     //bool connected();
@@ -23,7 +24,8 @@ class HubAPI
 
   private:
     const char* _address;
-    const int _port;
+    int _port;
+    WiFiClient _client;
 
 };
 

@@ -1,4 +1,7 @@
 # IoT
+This project aims to create a simple control system for home lighting.
+Users can control the lighting in their house from their phones,
+and setup triggers with geofencing to turn on and off lights based on their location.
 
 -
 #### Hub:

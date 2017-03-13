@@ -26,8 +26,8 @@ class HubAPI
     const char* _address;
     int _port;
     WiFiClient _client;
-    int _LEDPin = 16;
-    int _value = LOW;
+    uint8_t _LEDPin = 16;
+    uint8_t _value = LOW;
 
 };
 

@@ -17,6 +17,7 @@
 #include "WiFiConnection.h"
 #include "FS.h"
 #include "IoTNode.h"
+#include "WallSwitch.h"
 
 // ---- SETTINGS ----
 
@@ -28,7 +29,9 @@ const char* WIFI_AP_PASSWORD = "IoT Setup";
 const char* CONFIG_FILE = "/config.txt";
 const char* CONNECTIONS_FILE = "/connections.txt";
 
-IoTNode node(CONNECTIONS_FILE,WIFI_AP_SSID,WIFI_AP_PASSWORD);
+WiFiConnection WiFiConn(CONNECTIONS_FILE);
+
+IoTNode node(&WiFiConn,WIFI_AP_SSID,WIFI_AP_PASSWORD);
 
 WallSwitch ws(16);
 

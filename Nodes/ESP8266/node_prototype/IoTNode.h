@@ -12,10 +12,10 @@
 class IoTNode
 {
   public:
-    IoTNode(const char* APs_file, const char* AP_ssid, const char* AP_pass);
+    IoTNode(WiFiConnection* WiFiConn, const char* AP_ssid, const char* AP_pass);
 
-    WiFiConnection _APs;
-    HubAPI _HubAPI;
+    WiFiConnection* _APs;
+    HubAPI _HubAPI = HubAPI("192.168.1.4",9999);
 
     void scanWiFi();
     void connectWiFi();

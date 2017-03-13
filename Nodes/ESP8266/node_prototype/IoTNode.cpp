@@ -8,10 +8,10 @@
 #include <ESP8266WiFi.h>
 #include "HubAPI.h"
 
-IoTNode::IoTNode(const char* APs_file, const char* AP_ssid, const char* AP_pass)
+IoTNode::IoTNode(WiFiConnection* WiFiConn, const char* AP_ssid, const char* AP_pass)
 {
   // File containing Access Point Authentication Data.
-  _APs = WiFiConnection(APs_file);
+  _APs = WiFiConn;
   _HubAPI = HubAPI("192.168.1.4",9999);
   _mode = _SETUP;
   _initialized = false;
@@ -52,12 +52,12 @@ void IoTNode::scanWiFi(void)
 void IoTNode::connectWiFi(void)
 {
   int tries = 0;
-  _APs.resetTryConnections();
+  _APs->resetTryConnections();
   WiFiConnection::CONNECTION conn;
 
-  while(_APs.hasNext() && WiFi.status() != WL_CONNECTED){
+  while(_APs->hasNext() && WiFi.status() != WL_CONNECTED){
 
-    conn = _APs.getNext();
+    conn = _APs->getNext();
 
     for(int n = 0; n < _networks_found && WiFi.status() != WL_CONNECTED; ++n){
 
@@ -109,7 +109,7 @@ void IoTNode::runInit()
 {
   Serial.println("Node Init");
 
-  if(_APs.count() == 0){
+  if(_APs->count() == 0){
     _initialized = false;
     _mode = _SETUP;
     return; // Exit early, cause no point trying to connect.
@@ -178,7 +178,7 @@ void IoTNode::setupLoop()
   // AP phase should last 120 seconds,
   // Then we should try again to connect to WiFi.
   if(millis() - _last_try_connect > 20000){ // TODO change back to 120.. 20 for testing.
-    if(_APs.count() > 0){
+    if(_APs->count() > 0){
       Serial.println("Switching to Node Mode.");
       _mode = _RUN;
       _initialized = false;
@@ -196,12 +196,12 @@ void IoTNode::setup()
   // Load in any stored connections.
   //_APs.add("Liam's iPhone","derpderp");
   //_APs.add("SPARK-8GAY6T","TZXFK93XZC");
-  _APs.load();
-  _APs.list();
+  _APs->load();
+  _APs->list();
 
   // If we have a network we know,
   // We should be in node mode.
-  if(_APs.count() > 0){
+  if(_APs->count() > 0){
     _mode = _RUN;
   }
 }

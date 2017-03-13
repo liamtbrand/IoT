@@ -30,6 +30,8 @@ const char* CONNECTIONS_FILE = "/connections.txt";
 
 IoTNode node(CONNECTIONS_FILE,WIFI_AP_SSID,WIFI_AP_PASSWORD);
 
+WallSwitch ws(16);
+
 // ---- SERVER FUNCTIONS ----
 
 // Data structures

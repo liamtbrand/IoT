@@ -12,7 +12,7 @@ IoTNode::IoTNode(const char* APs_file, const char* AP_ssid, const char* AP_pass)
 {
   // File containing Access Point Authentication Data.
   _APs = WiFiConnection(APs_file);
-  _HubAPI = HubAPI("192.168.1.12",9999);
+  _HubAPI = HubAPI("192.168.1.4",9999);
   _mode = _SETUP;
   _initialized = false;
   _last_try_connect = 0;

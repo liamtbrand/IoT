@@ -31,15 +31,16 @@ const char* CONNECTIONS_FILE = "/connections.txt";
 
 WiFiConnection WiFiConn(CONNECTIONS_FILE);
 
-IoTNode node(&WiFiConn,WIFI_AP_SSID,WIFI_AP_PASSWORD);
+WallSwitch ws(4);
+LightSwitch ls(5);
 
-WallSwitch ws(16);
+IoTNode node(&WiFiConn,WIFI_AP_SSID,WIFI_AP_PASSWORD);
 
 // ---- SERVER FUNCTIONS ----
 
 // Data structures
 
-
+/*
 struct sample{
   int generation;
   int consumption;
@@ -93,29 +94,28 @@ void sendHubData(void){
 
   //send the request.
 
-  /*
 
-  if(client.available()) client.println(request);
 
-  unsigned long timeout = millis();
-  while (client.available() == 0) {
-    if (millis() - timeout > 5000) {
-      Serial.println(">>> Client Timeout !");
-      client.stop();
-      return;
-    }
-  }
+//  if(client.available()) client.println(request);
+//
+//  unsigned long timeout = millis();
+//  while (client.available() == 0) {
+//    if (millis() - timeout > 5000) {
+//      Serial.println(">>> Client Timeout !");
+//      client.stop();
+//      return;
+//    }
+//  }
+//
+//  Serial.println("Response: ------");
+//  while(client.available()){
+//    String line = client.readStringUntil('\r');
+//    Serial.print(line);
+//  }
+//  Serial.println("");
+//  Serial.println("----------------");
 
-  Serial.println("Response: ------");
-  while(client.available()){
-    String line = client.readStringUntil('\r');
-    Serial.print(line);
-  }
-  Serial.println("");
-  Serial.println("----------------");
-  */
-
-}
+}*/
 
 // ---- MAIN CODE ----
 

@@ -34,6 +34,7 @@ IoTNode node(CONNECTIONS_FILE,WIFI_AP_SSID,WIFI_AP_PASSWORD);
 
 // Data structures
 
+
 struct sample{
   int generation;
   int consumption;

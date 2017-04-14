@@ -18,6 +18,7 @@
 #include "FS.h"
 #include "IoTNode.h"
 #include "WallSwitch.h"
+#include "LightSwitch.h"
 
 // ---- SETTINGS ----
 
@@ -31,8 +32,11 @@ const char* CONNECTIONS_FILE = "/connections.txt";
 
 WiFiConnection WiFiConn(CONNECTIONS_FILE);
 
-WallSwitch ws(4);
-LightSwitch ls(5);
+const int PIN_D1 = 5;
+const int PIN_D2 = 4;
+
+WallSwitch ws(PIN_D2);
+LightSwitch ls(PIN_D1);
 
 IoTNode node(&WiFiConn,WIFI_AP_SSID,WIFI_AP_PASSWORD);
 
@@ -132,5 +136,9 @@ void setup(void) {
 }
 
 void loop(void) {
-  node.loop();
+  digitalWrite(PIN_D1,LOW);
+  delay(2000);
+  digitalWrite(PIN_D1,HIGH);
+  delay(2000);
+  //node.loop();
 }

@@ -1,0 +1,14 @@
+Partlist
+
+Exported from LightSwitch.sch at 14/04/17 18:06
+
+EAGLE Version 8.0.1 Copyright (c) 1988-2017 Autodesk, Inc.
+
+Assembly variant: 
+
+Part     Value          Device       Package  Library    Sheet
+
+D1       1N4148DO35-7   1N4148DO35-7 DO35-7   diode      1
+K1       JW1A           JW1A         JW1A     relay      1
+R3       100R           R-EU_0204/5  0204/5   resistor   1
+T1       2N5089         2N5089       TO92     transistor 1

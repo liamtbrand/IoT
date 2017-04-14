@@ -1,0 +1,14 @@
+Partlist
+
+Exported from WallSwitch.sch at 14/04/17 18:05
+
+EAGLE Version 8.0.1 Copyright (c) 1988-2017 Autodesk, Inc.
+
+Assembly variant: 
+
+Part     Value          Device          Package      Library  Sheet
+
+C1       100uF          C-EU025-024X044 C025-024X044 resistor 1
+R1       10R            R-EU_0204/5     0204/5       resistor 1
+R2       1K             R-EU_0204/5     0204/5       resistor 1
+S1                      MS243           MS243        switch   1

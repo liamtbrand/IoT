@@ -6,16 +6,18 @@
 #define IoTNode_h
 
 #include "Arduino.h"
-#include "WiFiConnection.h"
+#include "WiFiAPs.h"
 #include "HubAPI.h"
+#include "WallSwitch.h"
+#include "LightSwitch.h"
+#include "SetupController.h"
 
 class IoTNode
 {
   public:
-    IoTNode(WiFiConnection* WiFiConn, const char* AP_ssid, const char* AP_pass);
+    IoTNode(WiFiAPs* APs, const char* AP_ssid, const char* AP_pass, WallSwitch* wallSwitch, LightSwitch* lightSwitch, SetupController* setupController, HubAPI* hubAPI);
 
-    WiFiConnection* _APs;
-    HubAPI _HubAPI = HubAPI("192.168.1.4",9999);
+    WiFiAPs* _APs;
 
     void scanWiFi();
     void connectWiFi();
@@ -38,6 +40,12 @@ class IoTNode
     const char* _AP_ssid;
     const char* _AP_pass;
     int _networks_found = 0;
+
+    WallSwitch* _wallSwitch;
+    LightSwitch* _lightSwitch;
+
+    SetupController* _setupController;
+    HubAPI* _hubAPI;
 
 };
 

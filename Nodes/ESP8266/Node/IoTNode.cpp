@@ -4,20 +4,28 @@
 */
 #include "Arduino.h"
 #include "IoTNode.h"
-#include "WiFiConnection.h"
+#include "WiFiAPs.h"
 #include <ESP8266WiFi.h>
 #include "HubAPI.h"
+#include "WallSwitch.h"
+#include "LightSwitch.h"
+#include "SetupController.h"
 
-IoTNode::IoTNode(WiFiConnection* WiFiConn, const char* AP_ssid, const char* AP_pass)
+IoTNode::IoTNode(WiFiAPs* APs, const char* AP_ssid, const char* AP_pass, WallSwitch* wallSwitch, LightSwitch* lightSwitch, SetupController* setupController, HubAPI* hubAPI)
 {
   // File containing Access Point Authentication Data.
-  _APs = WiFiConn;
-  _HubAPI = HubAPI("192.168.1.4",9999);
+  _APs = APs;
   _mode = _SETUP;
   _initialized = false;
   _last_try_connect = 0;
   _AP_ssid = AP_ssid;
   _AP_pass = AP_pass;
+
+  _wallSwitch = wallSwitch;
+  _lightSwitch = lightSwitch;
+
+  _setupController = setupController;
+  _hubAPI = hubAPI;
 }
 
 void IoTNode::scanWiFi(void)
@@ -53,7 +61,7 @@ void IoTNode::connectWiFi(void)
 {
   int tries = 0;
   _APs->resetTryConnections();
-  WiFiConnection::CONNECTION conn;
+  WiFiAPs::CONNECTION conn;
 
   while(_APs->hasNext() && WiFi.status() != WL_CONNECTED){
 
@@ -135,7 +143,7 @@ void IoTNode::runInit()
     _mode = _SETUP;
   }else{
 
-    _HubAPI.connect();
+    _hubAPI->connect();
 
   }
 }
@@ -147,7 +155,7 @@ void IoTNode::runLoop()
     _initialized = false; // We will try to reconnect.
   }
 
-  _HubAPI.loop();
+  _hubAPI->loop();
 
   delay(1);
 
@@ -173,22 +181,27 @@ void IoTNode::setupInit()
 
 void IoTNode::setupLoop()
 {
-  Serial.println("Setup Loop");
+  //Serial.println("Setup Loop");
+
+  _setupController->loop();
 
   // AP phase should last 120 seconds,
   // Then we should try again to connect to WiFi.
-  if(millis() - _last_try_connect > 20000){ // TODO change back to 120.. 20 for testing.
+  /*
+  if(millis() - _last_try_connect > 18000){ // TODO change back to 120.. 20 for testing.
     if(_APs->count() > 0){
       Serial.println("Switching to Node Mode.");
       _mode = _RUN;
       _initialized = false;
     }else{
       Serial.println("No known APs, please create one.");
+      //delay(1000);
     }
-  }
+  }*/
 
-  Serial.println("Waiting for connections...");
-  delay(1000);
+  delay(1);
+
+  //Serial.println("Waiting for connections...");
 }
 
 void IoTNode::setup()

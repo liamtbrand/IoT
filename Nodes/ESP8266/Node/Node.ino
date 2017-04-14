@@ -8,17 +8,15 @@
  * NodeMCU 1.0 (ESP-12E Module), 80MHz
  * 9600 baud
  *
- * This software will send random values to the EnergyMonitor.
- * This project is currently in prototype.
- *
  */
 
 #include <ESP8266WiFi.h>
-#include "WiFiConnection.h"
-#include "FS.h"
+#include "WiFiAPs.h"
 #include "IoTNode.h"
 #include "WallSwitch.h"
 #include "LightSwitch.h"
+#include "PinMappings.h"
+#include "SetupController.h"
 
 // ---- SETTINGS ----
 
@@ -30,15 +28,18 @@ const char* WIFI_AP_PASSWORD = "IoT Setup";
 const char* CONFIG_FILE = "/config.txt";
 const char* CONNECTIONS_FILE = "/connections.txt";
 
-WiFiConnection WiFiConn(CONNECTIONS_FILE);
+WiFiAPs APs(CONNECTIONS_FILE);
 
-const int PIN_D1 = 5;
-const int PIN_D2 = 4;
+WallSwitch wallSwitch(PIN.D2);
+LightSwitch lightSwitch(PIN.D1);
 
-WallSwitch ws(PIN_D2);
-LightSwitch ls(PIN_D1);
+WiFiServer server(80);
 
-IoTNode node(&WiFiConn,WIFI_AP_SSID,WIFI_AP_PASSWORD);
+SetupController setupController(&server,&APs);
+
+HubAPI hubAPI("192.168.1.4",9999);
+
+IoTNode node(&APs,WIFI_AP_SSID,WIFI_AP_PASSWORD,&wallSwitch,&lightSwitch,&setupController,&hubAPI);
 
 // ---- SERVER FUNCTIONS ----
 
@@ -126,19 +127,13 @@ void sendHubData(void){
 void setup(void) {
 
   Serial.begin(SERIAL_BAUDRATE);
-  //Serial.println("AT+RST");
   Serial.println("ESP8266");
   Serial.println("I support 2.4GHz Wireless... FYI.");
   randomSeed(analogRead(0));
-  delay(2000);
-
+  APs.remove("SPARK-8GAY6T");
   node.setup();
 }
 
 void loop(void) {
-  digitalWrite(PIN_D1,LOW);
-  delay(2000);
-  digitalWrite(PIN_D1,HIGH);
-  delay(2000);
-  //node.loop();
+  node.loop();
 }

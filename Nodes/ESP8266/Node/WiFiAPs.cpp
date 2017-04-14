@@ -4,16 +4,16 @@
 */
 
 #include "Arduino.h"
-#include "WiFiConnection.h"
+#include "WiFiAPs.h"
 
-WiFiConnection::WiFiConnection(const char* save_filename)
+WiFiAPs::WiFiAPs(const char* save_filename)
 {
   _save_filename = save_filename;
   _connection_count = 0;
   _try_connection = 0;
 }
 
-bool WiFiConnection::add(const CONNECTION conn)
+bool WiFiAPs::add(const CONNECTION conn)
 {
   if(_connection_count < MAX_CONNECTIONS){
     _connections[_connection_count] = conn;
@@ -24,7 +24,7 @@ bool WiFiConnection::add(const CONNECTION conn)
   return false;
 }
 
-bool WiFiConnection::add(const char* ssid, const char* password)
+bool WiFiAPs::add(const char* ssid, const char* password)
 {
   CONNECTION conn;
   strcpy(conn.ssid,ssid);
@@ -32,7 +32,7 @@ bool WiFiConnection::add(const char* ssid, const char* password)
   add(conn);
 }
 
-void WiFiConnection::remove(const char* ssid)
+void WiFiAPs::remove(const char* ssid)
 {
 
   // Temporary storage.
@@ -56,7 +56,7 @@ void WiFiConnection::remove(const char* ssid)
   save();
 }
 
-void WiFiConnection::save()
+void WiFiAPs::save()
 {
   Serial.println("Saving...");
   File f;
@@ -88,7 +88,7 @@ void WiFiConnection::save()
   SPIFFS.end();
 }
 
-void WiFiConnection::load()
+void WiFiAPs::load()
 {
   Serial.println("Loading...");
   Serial.println(_save_filename);
@@ -134,30 +134,30 @@ void WiFiConnection::load()
 
 }
 
-void WiFiConnection::resetTryConnections()
+void WiFiAPs::resetTryConnections()
 {
   _try_connection = 0;
 }
 
-bool WiFiConnection::hasNext()
+bool WiFiAPs::hasNext()
 {
   return _try_connection < _connection_count;
 }
 
-WiFiConnection::CONNECTION WiFiConnection::getNext()
+WiFiAPs::CONNECTION WiFiAPs::getNext()
 {
   _try_connection++;
   return _connections[_try_connection-1];
 }
 
-int WiFiConnection::count()
+int WiFiAPs::count()
 {
   return _connection_count;
 }
 
-void WiFiConnection::list()
+void WiFiAPs::list()
 {
-  Serial.println("List APs:");
+  Serial.println("Known APs:");
   for(int i = 0; i < _connection_count; ++i){
     Serial.print(_connections[i].ssid);
     Serial.println(":******");

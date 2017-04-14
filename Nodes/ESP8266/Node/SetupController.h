@@ -6,17 +6,21 @@
 #define SetupController_h
 
 #include "Arduino.h"
-#include "WiFiConnection.h"
+#include "WiFiAPs.h"
+#include <ESP8266WiFi.h>
 
 class SetupController
 {
 
   public:
-    SetupController();
+    SetupController(WiFiServer* server, WiFiAPs* APs);
 
+    String prepareSetupPageHTML();
     void loop();
 
   private:
+    WiFiServer* _server;
+    WiFiAPs* _APs;
 
 };
 

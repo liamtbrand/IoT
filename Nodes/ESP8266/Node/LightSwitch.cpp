@@ -8,17 +8,24 @@
 LightSwitch::LightSwitch(int pin)
 {
   _PIN = pin;
+  // Set the light pin as output.
+  pinMode(_PIN,OUTPUT);
+  digitalWrite(_PIN,LOW);
+  _on = false;
+  
 }
 
 _Bool LightSwitch::isOn()
 {
-  return digitalRead(_PIN) == LOW ? true : false;
+  return _on;
 }
 
 void LightSwitch::setOn(){
-  digitalWrite(_PIN,LOW);
+  digitalWrite(_PIN,HIGH);
+  _on = true;
 }
 
 void LightSwitch::setOff(){
-  digitalWrite(_PIN,HIGH);
+  digitalWrite(_PIN,LOW);
+  _on = false;
 }

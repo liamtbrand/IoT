@@ -1,14 +1,14 @@
 /*
-  WiFiConnection.h - Library for storing wifi connection information.
+  WiFiAPs.h - Library for storing wifi connection information.
   Created by Liam T. Brand, February 18, 2017.
 */
-#ifndef WiFiConnection_h
-#define WiFiConnection_h
+#ifndef WiFiAPs_h
+#define WiFiAPs_h
 
 #include "Arduino.h"
 #include "FS.h"
 
-class WiFiConnection
+class WiFiAPs
 {
 
   public:
@@ -22,7 +22,7 @@ class WiFiConnection
     static const int MAX_CONNECTIONS = 8;
 
     // Setup and manage connections
-    WiFiConnection(const char* save_filename);
+    WiFiAPs(const char* save_filename);
     bool add(const CONNECTION conn);
     bool add(const char* ssid, const char* password);
     void remove(const char* ssid);

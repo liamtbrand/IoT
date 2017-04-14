@@ -14,12 +14,12 @@ class LightSwitch
     LightSwitch(int pin);
 
     _Bool isOn();
-
     void setOn();
     void setOff();
 
   private:
     int _PIN;
+    _Bool _on;
 
 };
 

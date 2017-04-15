@@ -12,11 +12,12 @@
 
 #include <ESP8266WiFi.h>
 #include "WiFiAPs.h"
-#include "IoTNode.h"
+#include "NodeWiFi.h"
 #include "WallSwitch.h"
-#include "LightSwitch.h"
+#include "LightController.h"
 #include "PinMappings.h"
 #include "SetupController.h"
+#include "VirtualSwitch.h"
 
 // ---- SETTINGS ----
 
@@ -28,18 +29,23 @@ const char* WIFI_AP_PASSWORD = "IoT Setup";
 const char* CONFIG_FILE = "/config.txt";
 const char* CONNECTIONS_FILE = "/connections.txt";
 
+const char* HUB_ADDRESS = "192.168.1.4";
+const int HUB_PORT = 9999;
+
 WiFiAPs APs(CONNECTIONS_FILE);
 
 WallSwitch wallSwitch(PIN.D2);
-LightSwitch lightSwitch(PIN.D1);
+VirtualSwitch virtualSwitch(false);
+LightController lightController(PIN.D1);
+_Bool lightState = lightController.isOn();
 
 WiFiServer server(80);
 
 SetupController setupController(&server,&APs);
 
-HubAPI hubAPI("192.168.1.4",9999);
+//HubAPI hubAPI(HUB_ADDRESS,HUB_PORT);
 
-IoTNode node(&APs,WIFI_AP_SSID,WIFI_AP_PASSWORD,&wallSwitch,&lightSwitch,&setupController,&hubAPI);
+NodeWiFi nodeWiFi(&APs,WIFI_AP_SSID,WIFI_AP_PASSWORD);
 
 // ---- SERVER FUNCTIONS ----
 
@@ -130,10 +136,29 @@ void setup(void) {
   Serial.println("ESP8266");
   Serial.println("I support 2.4GHz Wireless... FYI.");
   randomSeed(analogRead(0));
-  APs.remove("SPARK-8GAY6T");
-  node.setup();
+
+  nodeWiFi.setup();
 }
 
 void loop(void) {
-  node.loop();
+
+  // Set current wifi mode
+  nodeWiFi.loop();
+
+  // Check for light updates
+  
+
+  // Set light state from switches.
+  if( (virtualSwitch.isOn() && !wallSwitch.isOn()) ||
+      (!virtualSwitch.isOn() && wallSwitch.isOn())){
+    lightController.setOn();
+  }else{
+    lightController.setOff();
+  }
+
+  if(lightState != lightController.isOn()){ // If the current state has updated
+    lightState = lightController.isOn();
+    //hub.sendMessage("Light is on."); // Send a notification of the update.
+  }
+
 }

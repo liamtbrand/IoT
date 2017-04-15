@@ -6,18 +6,17 @@
 #define WallSwitch_h
 
 #include "Arduino.h"
+#include "Switch.h"
 
-class WallSwitch
+class WallSwitch : public Switch
 {
-
   public:
     WallSwitch(int pin);
-
+    
     _Bool isOn();
 
   private:
-    int _PIN;
-
+    int _pin;
 };
 
 #endif

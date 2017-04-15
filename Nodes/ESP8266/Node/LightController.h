@@ -1,24 +1,24 @@
 /*
-  LightSwitch.h - Interface to set the state of the light.
+  LightController.h - Interface to set the state of the light.
   Created by Liam T. Brand, March 13, 2017.
 */
-#ifndef LightSwitch_h
-#define LightSwitch_h
+#ifndef LightController_h
+#define LightController_h
 
 #include "Arduino.h"
 
-class LightSwitch
+class LightController
 {
 
   public:
-    LightSwitch(int pin);
+    LightController(int pin);
 
     _Bool isOn();
     void setOn();
     void setOff();
 
   private:
-    int _PIN;
+    int _pin;
     _Bool _on;
 
 };

@@ -1,21 +1,17 @@
 /*
-  IoTNode.h - Node for IoT ESP8266
+  NodeWiFi.h - Node for IoT ESP8266
   Created by Liam T. Brand, February 18, 2017.
 */
-#ifndef IoTNode_h
-#define IoTNode_h
+#ifndef NodeWiFi_h
+#define NodeWiFi_h
 
 #include "Arduino.h"
 #include "WiFiAPs.h"
-#include "HubAPI.h"
-#include "WallSwitch.h"
-#include "LightSwitch.h"
-#include "SetupController.h"
 
-class IoTNode
+class NodeWiFi
 {
   public:
-    IoTNode(WiFiAPs* APs, const char* AP_ssid, const char* AP_pass, WallSwitch* wallSwitch, LightSwitch* lightSwitch, SetupController* setupController, HubAPI* hubAPI);
+    NodeWiFi(WiFiAPs* APs, const char* AP_ssid, const char* AP_pass);
 
     WiFiAPs* _APs;
 
@@ -40,12 +36,7 @@ class IoTNode
     const char* _AP_ssid;
     const char* _AP_pass;
     int _networks_found = 0;
-
-    WallSwitch* _wallSwitch;
-    LightSwitch* _lightSwitch;
-
-    SetupController* _setupController;
-    HubAPI* _hubAPI;
+    unsigned long _APTimeout = 20000; // TODO change back to 120.. 20 for testing.
 
 };
 

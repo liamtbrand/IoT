@@ -1,17 +1,13 @@
 /*
-  IoTNode.h - Node for IoT ESP8266
+  NodeWiFi.h - Node for IoT ESP8266
   Created by Liam T. Brand, February 18, 2017.
 */
 #include "Arduino.h"
-#include "IoTNode.h"
+#include "NodeWiFi.h"
 #include "WiFiAPs.h"
 #include <ESP8266WiFi.h>
-#include "HubAPI.h"
-#include "WallSwitch.h"
-#include "LightSwitch.h"
-#include "SetupController.h"
 
-IoTNode::IoTNode(WiFiAPs* APs, const char* AP_ssid, const char* AP_pass, WallSwitch* wallSwitch, LightSwitch* lightSwitch, SetupController* setupController, HubAPI* hubAPI)
+NodeWiFi::NodeWiFi(WiFiAPs* APs, const char* AP_ssid, const char* AP_pass)
 {
   // File containing Access Point Authentication Data.
   _APs = APs;
@@ -20,15 +16,9 @@ IoTNode::IoTNode(WiFiAPs* APs, const char* AP_ssid, const char* AP_pass, WallSwi
   _last_try_connect = 0;
   _AP_ssid = AP_ssid;
   _AP_pass = AP_pass;
-
-  _wallSwitch = wallSwitch;
-  _lightSwitch = lightSwitch;
-
-  _setupController = setupController;
-  _hubAPI = hubAPI;
 }
 
-void IoTNode::scanWiFi(void)
+void NodeWiFi::scanWiFi(void)
 {
   Serial.println("Scanning WiFi networks...");
 
@@ -57,7 +47,7 @@ void IoTNode::scanWiFi(void)
   Serial.println("");
 }
 
-void IoTNode::connectWiFi(void)
+void NodeWiFi::connectWiFi(void)
 {
   int tries = 0;
   _APs->resetTryConnections();
@@ -113,7 +103,7 @@ void IoTNode::connectWiFi(void)
 
 }
 
-void IoTNode::runInit()
+void NodeWiFi::runInit()
 {
   Serial.println("Node Init");
 
@@ -141,29 +131,21 @@ void IoTNode::runInit()
 
   if(_initialized == false){
     _mode = _SETUP;
-  }else{
-
-    _hubAPI->connect();
-
   }
 }
 
-void IoTNode::runLoop()
+void NodeWiFi::runLoop()
 {
 
   if(WiFi.status() != WL_CONNECTED){
     _initialized = false; // We will try to reconnect.
   }
 
-  _hubAPI->loop();
-
-  delay(1);
-
   //connectToHub();
   //sendHubData();
 }
 
-void IoTNode::setupInit()
+void NodeWiFi::setupInit()
 {
   Serial.println("Setup Init");
 
@@ -179,16 +161,14 @@ void IoTNode::setupInit()
   _initialized = true;
 }
 
-void IoTNode::setupLoop()
+void NodeWiFi::setupLoop()
 {
   //Serial.println("Setup Loop");
 
-  _setupController->loop();
-
   // AP phase should last 120 seconds,
   // Then we should try again to connect to WiFi.
-  /*
-  if(millis() - _last_try_connect > 18000){ // TODO change back to 120.. 20 for testing.
+  
+  if(millis() - _last_try_connect > _APTimeout){ 
     if(_APs->count() > 0){
       Serial.println("Switching to Node Mode.");
       _mode = _RUN;
@@ -197,14 +177,12 @@ void IoTNode::setupLoop()
       Serial.println("No known APs, please create one.");
       //delay(1000);
     }
-  }*/
-
-  delay(1);
+  }
 
   //Serial.println("Waiting for connections...");
 }
 
-void IoTNode::setup()
+void NodeWiFi::setup()
 {
   // Load in any stored connections.
   //_APs.add("Liam's iPhone","derpderp");
@@ -219,7 +197,7 @@ void IoTNode::setup()
   }
 }
 
-void IoTNode::loop()
+void NodeWiFi::loop()
 {
   switch(_mode){
 

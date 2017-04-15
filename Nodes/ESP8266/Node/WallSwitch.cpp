@@ -7,10 +7,10 @@
 
 WallSwitch::WallSwitch(int pin)
 {
-  _PIN = pin;
+  _pin = pin;
 }
 
 _Bool WallSwitch::isOn()
 {
-  return digitalRead(_PIN) == LOW ? true : false;
+  return digitalRead(_pin) == LOW ? true : false;
 }

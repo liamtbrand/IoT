@@ -15,22 +15,53 @@ HubAPI::HubAPI(const char* address, int port)
 
 void HubAPI::connect()
 {
-  Serial.println("Attempting to connect to hub...");
-  if(!_client.connect(_address,_port)){
-    Serial.println("Couldn't connect to hub...");
-  }else{
-    Serial.println("Connected to hub successfully.");
-    _client.println("Test string! Works :)");
-  }
+  //Serial.println("Attempting to connect to hub...");
+  _disconnected = !_client.connect(_address,_port);
+}
+
+void HubAPI::notifyOfState(_Bool state) // Notify that the light is on or off..
+{
+  _newState = state;
+  _notifyOfState = true;
+}
+
+void HubAPI::notifyOfDisconnect()
+{
+  _disconnected = true;
 }
 
 void HubAPI::loop()
 {
-  if (_client.available()) {
-    char c = _client.read();
-    Serial.print(c);
+  if(_disconnected){ // Try reconnect if we are disconnected.
+    connect();
   }
 
-  digitalWrite(_LEDPin,_value);
+  if(!_disconnected){
 
+    if (_client.available()) {
+      char c = _client.read();
+      Serial.print(c);
+    }
+
+    // If we are notifying of state, send notification.
+    if(_notifyOfState == true){
+      _notifyOfState = false;
+      if(_newState != _state){
+        _state = _newState;
+        // Send message to hub...
+        if(_state == true){
+          bytesSent = _client.println("STATE:ON");
+          if(bytesSent != 9){
+            notifyOfDisconnect();
+          }
+        }else{
+          bytesSent = _client.println("STATE:OFF");
+          if(bytesSent != 10){
+            notifyOfDisconnect();
+          }
+        }
+      }
+    }
+
+  }
 }

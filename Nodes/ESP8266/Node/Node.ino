@@ -35,7 +35,7 @@ const int HUB_PORT = 9999;
 WiFiAPs APs(CONNECTIONS_FILE);
 
 WallSwitch wallSwitch(PIN.D2);
-VirtualSwitch virtualSwitch(false);
+VirtualSwitch virtualSwitch = new VirtualSwitch(false);
 LightController lightController(PIN.D1);
 _Bool lightState = lightController.isOn();
 
@@ -43,7 +43,7 @@ WiFiServer server(80);
 
 SetupController setupController(&server,&APs);
 
-//HubAPI hubAPI(HUB_ADDRESS,HUB_PORT);
+HubAPI hubAPI(HUB_ADDRESS,HUB_PORT);
 
 NodeWiFi nodeWiFi(&APs,WIFI_AP_SSID,WIFI_AP_PASSWORD);
 
@@ -146,7 +146,7 @@ void loop(void) {
   nodeWiFi.loop();
 
   // Check for light updates
-  
+  hubAPI.loop();
 
   // Set light state from switches.
   if( (virtualSwitch.isOn() && !wallSwitch.isOn()) ||
@@ -158,6 +158,7 @@ void loop(void) {
 
   if(lightState != lightController.isOn()){ // If the current state has updated
     lightState = lightController.isOn();
+    hubAPI.notifyOfState(lightState);
     //hub.sendMessage("Light is on."); // Send a notification of the update.
   }
 

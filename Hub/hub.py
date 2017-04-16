@@ -22,6 +22,8 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         # just send back the same data, but upper-cased
         self.request.sendall(self.data.upper())
 
+        self.request.sendall();
+
 if __name__ == "__main__":
     HOST, PORT = "", 9999
 

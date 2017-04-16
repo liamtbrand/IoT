@@ -50,13 +50,13 @@ void HubAPI::loop()
         _state = _newState;
         // Send message to hub...
         if(_state == true){
-          bytesSent = _client.println("STATE:ON");
-          if(bytesSent != 9){
+          _bytesSent = _client.println("STATE:ON");
+          if(_bytesSent != 9){
             notifyOfDisconnect();
           }
         }else{
-          bytesSent = _client.println("STATE:OFF");
-          if(bytesSent != 10){
+          _bytesSent = _client.println("STATE:OFF");
+          if(_bytesSent != 10){
             notifyOfDisconnect();
           }
         }

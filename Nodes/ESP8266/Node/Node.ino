@@ -18,6 +18,7 @@
 #include "PinMappings.h"
 #include "SetupController.h"
 #include "VirtualSwitch.h"
+#include "HubAPI.h"
 
 // ---- SETTINGS ----
 
@@ -34,9 +35,9 @@ const int HUB_PORT = 9999;
 
 WiFiAPs APs(CONNECTIONS_FILE);
 
-WallSwitch wallSwitch(PIN.D2);
+WallSwitch wallSwitch(PIN.D1);
 VirtualSwitch virtualSwitch = new VirtualSwitch(false);
-LightController lightController(PIN.D1);
+LightController lightController(PIN.D2);
 _Bool lightState = lightController.isOn();
 
 WiFiServer server(80);
@@ -137,6 +138,7 @@ void setup(void) {
   Serial.println("I support 2.4GHz Wireless... FYI.");
   randomSeed(analogRead(0));
 
+  Serial.println("WiFi Setup");
   nodeWiFi.setup();
 }
 

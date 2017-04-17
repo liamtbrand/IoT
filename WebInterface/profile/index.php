@@ -31,19 +31,44 @@ require '../menu.php';
 
       <p>Linked accounts that can be used to sign in.</p>
 
-      <div class="ui three fields">
+      <div class="ui two fields">
         <div class="ui field">
-          <button class="ui fluid large facebook button">
-            <i class="facebook icon"></i>
-            Facebook
-          </button>
+
+          <div class="ui fluid left labeled button">
+            <a class="ui basic label">
+              <div class="ui fitted toggle checkbox">
+                <input type="checkbox">
+                <label></label>
+              </div>
+            </a>
+            <div class="ui fluid large facebook button">
+              <i class="facebook icon"></i>
+              Facebook
+            </div>
+          </div>
+
         </div>
 
         <div class="ui field">
+
+          <div class="ui fluid left labeled button">
+            <a class="ui basic label">
+              <div class="ui fitted toggle checkbox">
+                <input type="checkbox">
+                <label></label>
+              </div>
+            </a>
+            <div class="ui fluid large google plus button">
+              <i class="google plus icon"></i>
+              Google
+            </div>
+          </div>
+          <!--
           <button class="ui fluid large google plus button">
             <i class="google plus icon"></i>
             Google
           </button>
+        -->
         </div>
       </div>
 

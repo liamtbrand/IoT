@@ -4,7 +4,7 @@
 }
 </style>
 
-<div class="ui secondary pointing menu">
+<div class="ui fixed secondary pointing menu" style="background-color:#FFF;">
   <a class="item" id="home">
     <i class="home icon"></i>
     Home
@@ -28,6 +28,7 @@
     </a>
   </div>
 </div>
+<br /><br /><br />
 
 <script>
   $(document).ready(function(){

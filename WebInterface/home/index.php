@@ -16,9 +16,29 @@ require '../menu.php';
 
       <div class="ui segment">
         <div class="ui toggle checkbox">
-          <input name="public" type="checkbox">
+          <input name="public" type="checkbox" id="main-light">
           <label>Main light</label>
         </div>
       </div>
     </div>
 </center>
+
+<script src="/hub.js"></script>
+<script>
+
+  var hub = new Hub("192.168.1.4",9999);
+
+  $(document).ready(function(){
+
+    console.log('test');
+    $("#main-light").change(function() {
+      if(this.checked) {
+        // Do stuff
+        hub.sendMessage("STATE:ON");
+      }else{
+        // Do other stuff
+        hub.sendMessage("STATE:OFF");
+      }
+    });
+  });
+</script>

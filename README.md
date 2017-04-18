@@ -20,3 +20,18 @@ These settings are for the accesspoint this node connects to, and for the hub ip
 
 Once the node has successfully established a connection with the hub,
 it then talks to the hub, and verifies using the cloud.
+
+#### Components:
+* Node Hardware
+* Node Software
+* Hub Hardware
+* Hub Software
+* "Cloud" Software (Web App)
+
+#### TODO List:
+* Node
+  * Modular hardware design
+* Hub
+  * 
+* "Cloud" (Web App)
+  * 

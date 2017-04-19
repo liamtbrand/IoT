@@ -10,6 +10,8 @@
 class Switch
 {
   public:
+    virtual _Bool hasChangedState() = 0;
+    virtual _Bool readState() = 0;
     virtual _Bool isOn() = 0;
 };
 

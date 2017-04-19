@@ -4,6 +4,7 @@ Written By Liam T. Brand.
 '''
 
 import socketserver
+import time
 
 class MyTCPHandler(socketserver.BaseRequestHandler):
     """
@@ -18,11 +19,22 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         # self.request is the TCP socket connected to the client
         self.data = self.request.recv(1024).strip()
         print("{} wrote:".format(self.client_address[0]))
+        print(">>")
         print(self.data)
         # just send back the same data, but upper-cased
-        self.request.sendall(self.data.upper())
+        #self.request.sendall(self.data.upper())
 
-        self.request.sendall();
+        print("<<")
+        self.request.send(b'LIGHT:ON\n')
+        print("b'LIGHT:ON\n'")
+
+        while True:
+            time.sleep(5)
+            self.request.send(b'LIGHT:OFF\n')
+            time.sleep(5)
+            self.request.send(b'LIGHT:ON\n')
+
+        #self.request.sendall();
 
 if __name__ == "__main__":
     HOST, PORT = "", 9999

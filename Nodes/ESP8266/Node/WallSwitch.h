@@ -12,10 +12,13 @@ class WallSwitch : public Switch
 {
   public:
     WallSwitch(int pin);
-    
+
+    _Bool hasChangedState();
+    _Bool readState();
     _Bool isOn();
 
   private:
+    _Bool _lastState;
     int _pin;
 };
 

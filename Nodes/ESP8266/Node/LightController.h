@@ -14,8 +14,7 @@ class LightController
     LightController(int pin);
 
     _Bool isOn();
-    void setOn();
-    void setOff();
+    void setState(_Bool state);
 
   private:
     int _pin;

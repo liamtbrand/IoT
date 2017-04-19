@@ -7,6 +7,7 @@
 
 #include "Arduino.h"
 #include <ESP8266WiFi.h>
+#include "FIFOQueue.h"
 
 class HubAPI
 {
@@ -20,11 +21,14 @@ class HubAPI
     //void send(); // Sends the specified data to the hub.
     //void next(); // Gets the next data from the hub.
 
-    // State notification
-    void notifyOfState(_Bool state);
-
     // Disconnect notification
     void notifyOfDisconnect();
+
+    // Queue a message to be sent to the hub.
+    void sendMessage(String message);
+
+    _Bool hasMessage();
+    String getMessage();
 
     void loop();
 
@@ -32,16 +36,16 @@ class HubAPI
     const char* _address;
     int _port;
     WiFiClient _client;
-    uint8_t _LEDPin = 16;
-    uint8_t _value = LOW;
 
-    // State notification
-    _Bool _state = false;
-    _Bool _notifyOfState = false;
-    _Bool _newState = false;
+    FIFOQueue _messageQueue;
+    FIFOQueue _messageInQueue;
+    
+    char _cIn;
+    String _messageIn;
 
     // Data send check
     int _bytesSent = 0;
+    String msg;
 
     // Disconnect status
     _Bool _disconnected = true;

@@ -10,9 +10,7 @@ LightController::LightController(int pin)
   _pin = pin;
   // Set the light pin as output.
   pinMode(_pin,OUTPUT);
-  digitalWrite(_pin,LOW);
-  _on = false;
-
+  setState(false);
 }
 
 _Bool LightController::isOn()
@@ -20,12 +18,12 @@ _Bool LightController::isOn()
   return _on;
 }
 
-void LightController::setOn(){
-  digitalWrite(_pin,HIGH);
-  _on = true;
-}
-
-void LightController::setOff(){
-  digitalWrite(_pin,LOW);
-  _on = false;
+void LightController::setState(_Bool state)
+{
+  _on = state;
+  if(_on){
+    digitalWrite(_pin,HIGH);
+  }else{
+    digitalWrite(_pin,LOW);
+  }
 }

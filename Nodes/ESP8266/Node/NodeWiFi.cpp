@@ -167,8 +167,8 @@ void NodeWiFi::setupLoop()
 
   // AP phase should last 120 seconds,
   // Then we should try again to connect to WiFi.
-  
-  if(millis() - _last_try_connect > _APTimeout){ 
+
+  if(millis() - _last_try_connect > _APTimeout){
     if(_APs->count() > 0){
       Serial.println("Switching to Node Mode.");
       _mode = _RUN;
@@ -186,7 +186,7 @@ void NodeWiFi::setup()
 {
   // Load in any stored connections.
   //_APs.add("Liam's iPhone","derpderp");
-  //_APs.add("SPARK-8GAY6T","TZXFK93XZC");
+  _APs->add("SPARK-8GAY6T","TZXFK93XZC");
   _APs->load();
   _APs->list();
 

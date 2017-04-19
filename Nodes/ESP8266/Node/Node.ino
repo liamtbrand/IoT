@@ -19,6 +19,7 @@
 #include "SetupController.h"
 #include "VirtualSwitch.h"
 #include "HubAPI.h"
+#include "Message.h"
 
 // ---- SETTINGS ----
 
@@ -38,7 +39,6 @@ WiFiAPs APs(CONNECTIONS_FILE);
 WallSwitch wallSwitch(PIN.D1);
 VirtualSwitch virtualSwitch = new VirtualSwitch(false);
 LightController lightController(PIN.D2);
-_Bool lightState = lightController.isOn();
 
 WiFiServer server(80);
 
@@ -139,7 +139,10 @@ void setup(void) {
   randomSeed(analogRead(0));
 
   Serial.println("WiFi Setup");
+
   nodeWiFi.setup();
+
+  hubAPI.sendMessage(Message.LIGHT_QUERY); // Request light state push back
 }
 
 void loop(void) {
@@ -150,18 +153,31 @@ void loop(void) {
   // Check for light updates
   hubAPI.loop();
 
-  // Set light state from switches.
-  if( (virtualSwitch.isOn() && !wallSwitch.isOn()) ||
-      (!virtualSwitch.isOn() && wallSwitch.isOn())){
-    lightController.setOn();
-  }else{
-    lightController.setOff();
+  if(hubAPI.hasMessage()){
+    // If there is a message waiting, process it.
+    String message = hubAPI.getMessage();
+
+    if(message == Message.LIGHT_ON){
+      virtualSwitch.setState(true);
+    }
+    if(message == Message.LIGHT_OFF){
+      virtualSwitch.setState(false);
+    }
   }
 
-  if(lightState != lightController.isOn()){ // If the current state has updated
-    lightState = lightController.isOn();
-    hubAPI.notifyOfState(lightState);
-    //hub.sendMessage("Light is on."); // Send a notification of the update.
+  // If the wall switch has changed state, queue a notification
+  if(wallSwitch.hasChangedState()){
+    if(wallSwitch.readState()){
+      hubAPI.sendMessage(Message.SWITCH_ON);
+    }else{
+      hubAPI.sendMessage(Message.SWITCH_OFF);
+    }
+  }
+
+  // If the virtual switch has changed state, push the change to the light.
+  if(virtualSwitch.hasChangedState()){
+    Serial.println("SETTING STATE");
+    lightController.setState(virtualSwitch.readState());
   }
 
 }

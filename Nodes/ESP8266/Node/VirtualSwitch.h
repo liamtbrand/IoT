@@ -9,12 +9,14 @@ class VirtualSwitch : public Switch
   public:
     VirtualSwitch(_Bool state);
 
+    _Bool hasChangedState();
+    _Bool readState();
     _Bool isOn();
 
-    void setOn();
-    void setOff();
+    void setState(_Bool state);
 
   private:
+    _Bool _lastState;
     _Bool _state;
 };
 

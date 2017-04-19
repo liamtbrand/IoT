@@ -8,6 +8,22 @@
 WallSwitch::WallSwitch(int pin)
 {
   _pin = pin;
+  _lastState = !isOn(); // push initial state.
+}
+
+_Bool WallSwitch::hasChangedState()
+{
+  if(_lastState != isOn()){
+    return true;
+  }else{
+    return false;
+  }
+}
+
+_Bool WallSwitch::readState()
+{
+  _lastState = isOn();
+  return _lastState;
 }
 
 _Bool WallSwitch::isOn()

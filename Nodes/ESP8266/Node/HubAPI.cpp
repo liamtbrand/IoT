@@ -19,15 +19,23 @@ void HubAPI::connect()
   _disconnected = !_client.connect(_address,_port);
 }
 
-void HubAPI::notifyOfState(_Bool state) // Notify that the light is on or off..
-{
-  _newState = state;
-  _notifyOfState = true;
-}
-
 void HubAPI::notifyOfDisconnect()
 {
   _disconnected = true;
+}
+
+void HubAPI::sendMessage(String message){
+  _messageQueue.add(message);
+}
+
+_Bool HubAPI::hasMessage()
+{
+  return _messageInQueue.hasNext();
+}
+
+String HubAPI::getMessage()
+{
+  return _messageInQueue.getNext();
 }
 
 void HubAPI::loop()
@@ -36,31 +44,26 @@ void HubAPI::loop()
     connect();
   }
 
+  if (_client.available()) {
+    _cIn = _client.read();
+    if(_cIn == '\n'){
+      _messageInQueue.add(_messageIn);
+      _messageIn = "";
+    }else{
+      _messageIn += _cIn;
+    }
+  }
+
   if(!_disconnected){
 
-    if (_client.available()) {
-      char c = _client.read();
-      Serial.print(c);
-    }
-
-    // If we are notifying of state, send notification.
-    if(_notifyOfState == true){
-      _notifyOfState = false;
-      if(_newState != _state){
-        _state = _newState;
-        // Send message to hub...
-        if(_state == true){
-          _bytesSent = _client.println("STATE:ON");
-          if(_bytesSent != 9){
-            notifyOfDisconnect();
-          }
-        }else{
-          _bytesSent = _client.println("STATE:OFF");
-          if(_bytesSent != 10){
-            notifyOfDisconnect();
-          }
-        }
-      }
+    // If we have a message waiting to be sent:
+    if(_messageQueue.hasNext()){
+      msg = _messageQueue.getNext();
+      _bytesSent = _client.println(msg);
+      /*
+      if(_bytesSent != msg.length){
+        notifyOfDisconnect();
+      }*/
     }
 
   }

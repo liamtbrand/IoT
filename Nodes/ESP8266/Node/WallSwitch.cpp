@@ -4,10 +4,11 @@
 */
 
 #include "WallSwitch.h"
+#include "DebouncedPin.h"
 
 WallSwitch::WallSwitch(int pin)
 {
-  _pin = pin;
+  _debouncedPin = new DebouncedPin(pin);
   _lastState = !isOn(); // push initial state.
 }
 
@@ -28,5 +29,5 @@ _Bool WallSwitch::readState()
 
 _Bool WallSwitch::isOn()
 {
-  return digitalRead(_pin) == LOW ? true : false;
+  return _debouncedPin->read() == LOW ? true : false;
 }

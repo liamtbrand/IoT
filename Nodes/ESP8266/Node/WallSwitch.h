@@ -7,6 +7,7 @@
 
 #include "Arduino.h"
 #include "Switch.h"
+#include "DebouncedPin.h"
 
 class WallSwitch : public Switch
 {
@@ -19,7 +20,7 @@ class WallSwitch : public Switch
 
   private:
     _Bool _lastState;
-    int _pin;
+    DebouncedPin* _debouncedPin;
 };
 
 #endif

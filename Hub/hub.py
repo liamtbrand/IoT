@@ -3,6 +3,7 @@ Main Hub software for IoT.
 Written By Liam T. Brand.
 '''
 
+from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import socketserver
 import time
 
@@ -28,11 +29,15 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         self.request.send(b'LIGHT:ON\n')
         print("b'LIGHT:ON\n'")
 
-        while True:
-            time.sleep(5)
-            self.request.send(b'LIGHT:OFF\n')
-            time.sleep(5)
-            self.request.send(b'LIGHT:ON\n')
+ #       while True:
+            #if(self.request.ready()):
+#            print(self.data)
+
+        #while True:
+        #    time.sleep(5)
+        #    self.request.send(b'LIGHT:OFF\n')
+        #    time.sleep(5)
+        #    self.request.send(b'LIGHT:ON\n')
 
         #self.request.sendall();
 

@@ -2,6 +2,9 @@
   WiFiAPs.h - Library for storing wifi connection information.
   Created by Liam T. Brand, February 18, 2017.
 */
+
+// TODO note: ssid - character string containing network SSID (max. 63 characters)
+
 #ifndef WiFiAPs_h
 #define WiFiAPs_h
 

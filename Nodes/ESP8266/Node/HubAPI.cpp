@@ -62,10 +62,11 @@ void HubAPI::loop()
       _bytesSent = _client.println(msg);
       Serial.print("Sending message: ");
       Serial.print(msg);
-      /*
+      Serial.print(">>"+inttostr(_bytesSent));
+      
       if(_bytesSent != msg.length){
         notifyOfDisconnect();
-      }*/
+      }
     }
 
   }

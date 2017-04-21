@@ -216,3 +216,16 @@ void NodeWiFi::loop()
       break;
   }
 }
+
+_Bool NodeWifi::isConnected()
+{
+  if(_mode == 1){ // STA mode
+    if(WiFi.status() == WL_CONNECTED){
+      return true;
+    }else{
+      return false;
+    }
+  }else if(_mode == 0){ // AP mode
+    
+  }
+}

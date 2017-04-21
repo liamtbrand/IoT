@@ -27,6 +27,9 @@ class NodeWiFi
     void setup();
     void loop();
 
+    // Notification of disconnect
+    _Bool isConnected();
+
   private:
     const int _SETUP = 0;
     const int _RUN = 1;

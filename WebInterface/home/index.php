@@ -34,10 +34,10 @@ require '../menu.php';
     $("#main-light").change(function() {
       if(this.checked) {
         // Do stuff
-        hub.sendMessage("STATE:ON");
+        hub.sendMessage("LIGHT:ON");
       }else{
         // Do other stuff
-        hub.sendMessage("STATE:OFF");
+        hub.sendMessage("LIGHT:OFF");
       }
     });
   });

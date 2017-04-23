@@ -16,118 +16,31 @@
 #include "WallSwitch.h"
 #include "LightController.h"
 #include "PinMappings.h"
-#include "SetupController.h"
 #include "VirtualSwitch.h"
 #include "HubAPI.h"
 #include "Message.h"
+#include "NodeConfig.h"
+#include "NodeOTA.h"
 
 // ---- SETTINGS ----
 
 const int SERIAL_BAUDRATE = 9600; //115200?
 
-const char* WIFI_AP_SSID = "IoT Setup ESP8266";
-const char* WIFI_AP_PASSWORD = "IoT Setup";
-
 const char* CONFIG_FILE = "/config.txt";
+NodeConfig nodeConfig(CONFIG_FILE);
+
 const char* CONNECTIONS_FILE = "/connections.txt";
-
-const char* HUB_ADDRESS = "192.168.1.4";
-const int HUB_PORT = 9999;
-
 WiFiAPs APs(CONNECTIONS_FILE);
 
 WallSwitch wallSwitch(PIN.D1);
 VirtualSwitch virtualSwitch = new VirtualSwitch(false);
 LightController lightController(PIN.D2);
 
-WiFiServer server(80);
+HubAPI hubAPI(nodeConfig.getHubAddress(),nodeConfig.getHubPort());
 
-SetupController setupController(&server,&APs);
+NodeWiFi nodeWiFi(&APs,nodeConfig.getAPSSID(),nodeConfig.getAPPassword());
 
-HubAPI hubAPI(HUB_ADDRESS,HUB_PORT);
-
-NodeWiFi nodeWiFi(&APs,WIFI_AP_SSID,WIFI_AP_PASSWORD);
-
-// ---- SERVER FUNCTIONS ----
-
-// Data structures
-
-/*
-struct sample{
-  int generation;
-  int consumption;
-};
-
-// Hub settings, this is where we will post data to.
-
-const int httpPort = 80;
-const char* host = "192.168.2.128";
-const char* server_root = "EnergyMonitor/www/";
-WiFiClient client;
-
-void connectToHub(void){
-  if(!client.connect(host,httpPort)){
-    Serial.print("Failed to connect to host ");
-    Serial.print(host);
-    Serial.print(":");
-    Serial.println(httpPort);
-  }
-}
-
-void sendHubData(void){
-
-  String url = "/";
-  url += String(server_root);
-  url += "input/send_data.php";
-
-  sample random_sample;
-  random_sample.generation = random(1000);
-  random_sample.consumption = random(2000);
-
-  String data = "";
-  data += "current_power_generation=" + String(random_sample.generation) + "&";
-  data += "current_power_consumption=" + String(random_sample.consumption) + "&";
-  data += "id=" + String(1);
-
-  String nl = "\r\n";
-
-  String request = "";
-    request += "POST " + url + " HTTP/1.1" + nl +
-               "Host: " + host + nl +
-               "Cache-Control: no-cache" + nl +
-               "Content-Type: application/x-www-form-urlencoded" + nl +
-               "Content-Length: " + String(data.length()) + nl +
-               nl +
-               data;
-
-  Serial.println("Request: -------");
-  Serial.println(request);
-  Serial.println("----------------");
-
-  //send the request.
-
-
-
-//  if(client.available()) client.println(request);
-//
-//  unsigned long timeout = millis();
-//  while (client.available() == 0) {
-//    if (millis() - timeout > 5000) {
-//      Serial.println(">>> Client Timeout !");
-//      client.stop();
-//      return;
-//    }
-//  }
-//
-//  Serial.println("Response: ------");
-//  while(client.available()){
-//    String line = client.readStringUntil('\r');
-//    Serial.print(line);
-//  }
-//  Serial.println("");
-//  Serial.println("----------------");
-
-}*/
+NodeOTA nodeOTA;
 
 // ---- MAIN CODE ----
 
@@ -142,15 +55,20 @@ void setup(void) {
 
   nodeWiFi.setup();
 
+  nodeOTA.setup();
+
   hubAPI.sendMessage(Message.LIGHT_QUERY); // Request light state push back
 }
 
 void loop(void) {
 
-  // Set current wifi mode
+  // Check for over the air updates.
+  nodeOTA.loop();
+
+  // Manage the wifi connections.
   nodeWiFi.loop();
 
-  // Check for light updates
+  // Check for light updates. Communicate with hub.
   hubAPI.loop();
 
   if(hubAPI.hasMessage()){
@@ -165,7 +83,7 @@ void loop(void) {
     }
   }
 
-  // If the wall switch has changed state, queue a notification
+  // If the wall switch has changed state, queue a notification.
   if(wallSwitch.hasChangedState()){
     if(wallSwitch.readState()){
       hubAPI.sendMessage(Message.SWITCH_ON);
@@ -175,6 +93,7 @@ void loop(void) {
   }
 
   // If the virtual switch has changed state, push the change to the light.
+  // The light should always reflect what the virtual switch is doing.
   if(virtualSwitch.hasChangedState()){
     Serial.println("SETTING STATE");
     lightController.setState(virtualSwitch.readState());

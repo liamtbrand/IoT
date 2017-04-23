@@ -217,7 +217,7 @@ void NodeWiFi::loop()
   }
 }
 
-_Bool NodeWifi::isConnected()
+_Bool NodeWiFi::isConnected()
 {
   if(_mode == 1){ // STA mode
     if(WiFi.status() == WL_CONNECTED){

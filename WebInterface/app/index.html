@@ -1,0 +1,32 @@
+
+
+<body>
+  <input name="public" type="checkbox" id="main-light">
+  <label>Main light</label>
+
+  <ul id="messages"></ul>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    var socket = io();
+  </script>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+  <script>
+
+    $(document).ready(function(){
+
+      $("#main-light").change(function() {
+        if(this.checked) {
+          // Do stuff
+          socket.emit('message',"LIGHT:ON");
+        }else{
+          // Do other stuff
+          socket.emit('message',"LIGHT:OFF");
+        }
+      });
+
+    });
+
+  </script>
+</body>

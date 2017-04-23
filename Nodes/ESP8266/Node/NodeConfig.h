@@ -15,6 +15,8 @@ class NodeConfig
     const char* getHubAddress();
     int getHubPort();
 
+    const char* getNodeID();
+
   private:
     const char* _config_file;
 
@@ -23,6 +25,8 @@ class NodeConfig
 
     const char* _hubAddress;
     int _hubPort;
+
+    const char* _nodeID = "xF30dKjd";
 };
 
 #endif

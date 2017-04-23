@@ -6,6 +6,7 @@
 #include "Arduino.h"
 #include "HubAPI.h"
 #include <ESP8266WiFi.h>
+#include "Message.h"
 
 HubAPI::HubAPI(const char* address, int port)
 {
@@ -42,6 +43,13 @@ void HubAPI::loop()
 {
   if(_disconnected){ // Try reconnect if we are disconnected.
     connect();
+  }else{
+
+    if(abs(millis() - _lastKeepAlivePacketSendTime) > _kaPacketPeriod){
+      sendMessage(Message.KEEPALIVE);
+      _lastKeepAlivePacketSendTime = millis();
+    }
+    
   }
 
   if (_client.available()) {
@@ -60,12 +68,8 @@ void HubAPI::loop()
     if(_messageQueue.hasNext()){
       msg = _messageQueue.getNext();
       _bytesSent = _client.println(msg);
-      Serial.print("Sending message: ");
-      Serial.print(msg);
-      Serial.print(">>");
-      Serial.print(_bytesSent);
       
-      if(_bytesSent != msg.length()){
+      if(_bytesSent != msg.length()+2){
         notifyOfDisconnect();
       }
     }

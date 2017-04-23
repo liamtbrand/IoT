@@ -24,7 +24,7 @@ public class ConnectionController implements Runnable {
 		while(true){
 			try {
 				clientSocket = _serverSocket.accept();
-				System.out.println("Connection accepted from: "+clientSocket.getInetAddress());
+				System.out.println("Connection accepted on port "+String.valueOf(_serverSocket.getLocalPort())+" from: "+clientSocket.getInetAddress());
 				_conns.add(new SocketConnection(clientSocket));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

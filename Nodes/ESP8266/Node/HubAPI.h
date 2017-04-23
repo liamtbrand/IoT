@@ -50,6 +50,10 @@ class HubAPI
     // Disconnect status
     _Bool _disconnected = true;
 
+    // Last keepalive packet sent
+    long int _lastKeepAlivePacketSendTime = 0;
+    long int _kaPacketPeriod = 10000;
+
 };
 
 #endif

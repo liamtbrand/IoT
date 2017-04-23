@@ -6,7 +6,7 @@
  *
  * This software is designed to run on the ESP8266.
  * NodeMCU 1.0 (ESP-12E Module), 80MHz
- * 9600 baud
+ * 115200 baud
  *
  */
 
@@ -25,7 +25,7 @@
 
 // ---- SETTINGS ----
 
-const int SERIAL_BAUDRATE = 115200; //115200?
+const int SERIAL_BAUDRATE = 115200;
 
 const char* CONFIG_FILE = "/config.txt";
 NodeConfig nodeConfig(CONFIG_FILE);
@@ -58,7 +58,7 @@ void setup(void) {
 
   nodeOTA.setup();
 
-  hubAPI.sendMessage("Node Version: 0.2\n");
+  hubAPI.sendMessage(Message.VERSION);
   hubAPI.sendMessage(Message.LIGHT_QUERY); // Request light state push back
 }
 

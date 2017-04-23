@@ -5,6 +5,10 @@
 
 static class Message{
   public:
+    const String VERSION = "VERSION:0.201";
+
+    const String KEEPALIVE = "KEEPALIVE";
+
     const String LIGHT_ON = "LIGHT:ON";
     const String LIGHT_OFF = "LIGHT:OFF";
     const String LIGHT_QUERY = "LIGHT:?";

@@ -58,6 +58,7 @@ public class Hub {
 			_webControllers = new ArrayList<WebController>();
 			
 			String message = "";
+			String response = "";
 		
 			while(true){
 				
@@ -73,6 +74,14 @@ public class Hub {
 					if(node.hasMessage()){
 						message = node.getMessage();
 						System.out.println("NODE >> "+message);
+						
+						if(message.equals("LIGHT:?")){ // If the node is asking for it's status
+							// Send the state of the light to the node.
+							response = "LIGHT:ON";
+							System.out.println("NODE << "+response);
+							node.sendMessage(response+"\n");
+						}
+						
 						for(WebController web : _webControllers){
 							System.out.println("WEB << "+message);
 							web.sendMessage(message);

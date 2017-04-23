@@ -1,8 +1,15 @@
 package hub;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.json.Json;
+import javax.json.stream.JsonParser;
 
 import node.Node;
 import web.WebController;
@@ -10,6 +17,25 @@ import web.WebController;
 public class Hub {
 
 	public static void main(String[] args) {
+		
+		Reader reader = null;
+		try {
+			reader = new FileReader("config.json");
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		if(reader == null){
+			String defaultConfig = "{\"test\":\"testing\"}";
+			reader = new StringReader(defaultConfig);
+		}
+		
+		JsonParser parser = Json.createParser(reader);
+		
+		while(parser.hasNext()){
+			// TODO get next element.
+		}
 		
 		ConnectionController nodeConns;
 		ConnectionController webConns;

@@ -77,7 +77,7 @@ public class Hub {
 						
 						if(message.equals("LIGHT:?")){ // If the node is asking for it's status
 							// Send the state of the light to the node.
-							response = "LIGHT:ON";
+							response = "LIGHT:OFF";
 							System.out.println("NODE << "+response);
 							node.sendMessage(response+"\n");
 						}

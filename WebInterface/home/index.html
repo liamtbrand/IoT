@@ -1,0 +1,66 @@
+
+<link rel="stylesheet" type="text/css" href="/semantic/dist/semantic.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+<script
+  src="https://code.jquery.com/jquery-3.1.1.min.js"
+  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+  crossorigin="anonymous"></script>
+<script src="/semantic/dist/semantic.min.js"></script>
+
+<div id="menu"></div>
+
+<script>
+$('#menu').load('menu.html');
+</script>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  var socket = io();
+</script>
+
+<center>
+    <div class="ui segment column">
+
+      <div class="ui slider checkbox">
+          <input name="newsletter" type="checkbox">
+          <label>Liam's Room</label>
+      </div>
+
+      <div class="ui divider"></div>
+
+      <div class="ui segment">
+        <div class="ui toggle checkbox">
+          <input name="public" type="checkbox" id="main-light">
+          <label>Main light</label>
+        </div>
+      </div>
+    </div>
+</center>
+
+<script src="/hub.js"></script>
+<script>
+  //var hub = new Hub("192.168.1.4",9999);
+
+  $(document).ready(function(){
+
+    $("#main-light").change(function() {
+      if(this.checked) {
+        // Do stuff
+        socket.emit('message',"LIGHT:ON");
+      }else{
+        // Do other stuff
+        socket.emit('message',"LIGHT:OFF");
+      }
+    });
+/*
+    $("#main-light").change(function() {
+      if(this.checked) {
+        // Do stuff
+        hub.sendMessage("LIGHT:ON");
+      }else{
+        // Do other stuff
+        hub.sendMessage("LIGHT:OFF");
+      }
+    });*/
+  });
+</script>

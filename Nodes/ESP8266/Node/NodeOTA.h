@@ -16,6 +16,7 @@ class NodeOTA
     void loop();
 
   private:
+    long int _lastTick = 0;
 
 };
 

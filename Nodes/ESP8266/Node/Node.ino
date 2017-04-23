@@ -11,6 +11,7 @@
  */
 
 #include <ESP8266WiFi.h>
+#include <ArduinoOTA.h>
 #include "WiFiAPs.h"
 #include "NodeWiFi.h"
 #include "WallSwitch.h"
@@ -24,7 +25,7 @@
 
 // ---- SETTINGS ----
 
-const int SERIAL_BAUDRATE = 9600; //115200?
+const int SERIAL_BAUDRATE = 115200; //115200?
 
 const char* CONFIG_FILE = "/config.txt";
 NodeConfig nodeConfig(CONFIG_FILE);
@@ -57,6 +58,7 @@ void setup(void) {
 
   nodeOTA.setup();
 
+  hubAPI.sendMessage("Node Version: 0.1\n");
   hubAPI.sendMessage(Message.LIGHT_QUERY); // Request light state push back
 }
 

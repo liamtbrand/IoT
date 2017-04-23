@@ -58,7 +58,7 @@ void setup(void) {
 
   nodeOTA.setup();
 
-  hubAPI.sendMessage("Node Version: 0.1\n");
+  hubAPI.sendMessage("Node Version: 0.2\n");
   hubAPI.sendMessage(Message.LIGHT_QUERY); // Request light state push back
 }
 

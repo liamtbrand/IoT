@@ -18,6 +18,7 @@ public class Hub {
 
 	public static void main(String[] args) {
 		
+		/*
 		Reader reader = null;
 		try {
 			reader = new FileReader("config.json");
@@ -35,7 +36,7 @@ public class Hub {
 		
 		while(parser.hasNext()){
 			// TODO get next element.
-		}
+		}*/
 		
 		ConnectionController nodeConns;
 		ConnectionController webConns;

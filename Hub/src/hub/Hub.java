@@ -11,8 +11,10 @@ import java.util.List;
 import javax.json.Json;
 import javax.json.stream.JsonParser;
 
+import cloud.CloudConnection;
+import connections.ConnectionController;
+import device.DeviceController;
 import node.Node;
-import web.WebController;
 
 public class Hub {
 
@@ -39,7 +41,8 @@ public class Hub {
 		}*/
 		
 		ConnectionController nodeConns;
-		ConnectionController webConns;
+		ConnectionController deviceConns;
+		CloudConnection cloudConn;
 		
 		try {
 			
@@ -47,15 +50,18 @@ public class Hub {
 			nodeConns = new ConnectionController(9999);
 			(new Thread(nodeConns)).start();
 			
+			// Interface with the cloud, if we can connect to it.
+			cloudConn = new CloudConnection("localhost",8083);
+			
 			// Port where web interfaces will connect
-			webConns = new ConnectionController(8081); // Port where web controllers will connect
-			(new Thread(webConns)).start();
+			deviceConns = new ConnectionController(8081); // Port where web controllers will connect
+			(new Thread(deviceConns)).start();
 
 			List<Node> _nodes;
-			List<WebController> _webControllers;
+			List<DeviceController> _devices;
 			
 			_nodes = new ArrayList<Node>();
-			_webControllers = new ArrayList<WebController>();
+			_devices = new ArrayList<DeviceController>();
 			
 			String message = "";
 			String response = "";
@@ -66,8 +72,8 @@ public class Hub {
 					_nodes.add(new Node(nodeConns.getConnection()));
 				}
 				
-				if(webConns.hasConnection()){
-					_webControllers.add(new WebController(webConns.getConnection()));
+				if(deviceConns.hasConnection()){
+					_devices.add(new DeviceController(deviceConns.getConnection()));
 				}
 				
 				for(Node node : _nodes){
@@ -82,21 +88,25 @@ public class Hub {
 							node.sendMessage(response+"\n");
 						}
 						
-						for(WebController web : _webControllers){
+						for(DeviceController web : _devices){
 							System.out.println("WEB << "+message);
 							web.sendMessage(message);
 						}
 					}
 				}
 				
-				for(WebController web : _webControllers){
+				for(DeviceController web : _devices){
 					if(web.hasMessage()){
 						message = web.getMessage();
 						System.out.println("WEB >> "+message);
+						//if(message.equals(""))
+						
 						for(Node node : _nodes){
+							
 							System.out.println("NODE << "+message);
 							node.sendMessage(message+"\n");
 						}
+						
 					}
 				}
 				

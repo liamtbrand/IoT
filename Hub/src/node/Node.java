@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import hub.SocketConnection;
+import connections.SocketConnection;
 
 public class Node {
 	

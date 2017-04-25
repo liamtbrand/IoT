@@ -1,12 +1,12 @@
-package web;
+package device;
 
-import hub.SocketConnection;
+import connections.SocketConnection;
 
-public class WebController {
+public class DeviceController {
 	
 	private SocketConnection _socketConnection;
 	
-	public WebController(SocketConnection socketConnection){
+	public DeviceController(SocketConnection socketConnection){
 		_socketConnection = socketConnection;
 	}
 

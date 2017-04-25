@@ -85,6 +85,9 @@ void loop(void) {
     }
   }
 
+  // TODO: If the hub cannot be connected to,
+  // bind the physical switch to the virtual switch as a toggle.
+
   // If the wall switch has changed state, queue a notification.
   if(wallSwitch.hasChangedState()){
     if(wallSwitch.readState()){

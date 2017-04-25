@@ -1,4 +1,4 @@
-package hub;
+package connections;
 
 import java.io.IOException;
 import java.net.ServerSocket;

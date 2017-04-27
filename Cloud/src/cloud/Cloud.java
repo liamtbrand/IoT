@@ -30,6 +30,15 @@ public class Cloud {
 					webServers.add(new WebServer());
 				}
 				
+				System.out.println(nodeId.generateNewID());
+				
+				try {
+					Thread.sleep(10000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
 			}
 			
 			

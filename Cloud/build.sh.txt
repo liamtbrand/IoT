@@ -1,5 +1,5 @@
-buildDir="./build"
-srcDir="./src"
+buildDir="./build/"
+srcDir="./src/"
 javaMainClass="./cloud/Cloud.java"
 outJarFile="Cloud.jar"
 manifestFile="./Manifest.txt"

@@ -1,0 +1,25 @@
+buildDir="./build"
+srcDir="./src"
+javaMainClass="./cloud/Cloud.java"
+outJarFile="Cloud.jar"
+manifestFile="./Manifest.txt"
+
+# Compile java source
+mkdir $buildDir
+javac -d $buildDir -cp $srcDir $srcDir$javaMainClass
+
+# Generate jar file.
+
+cd $buildDir
+# Make manifest
+echo "Main-Class: $mainClass" >> $manifestFile
+# Create jar
+jar cfm $outJarFile $manifestFile "."
+# Move jar file
+mv $outJarFile "../"
+cd "../"
+
+# End Generate jar file.
+
+# Clean up build
+rm -r $buildDir

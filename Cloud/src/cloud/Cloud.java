@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import connections.ConnectionController;
+import node.NodeID;
 import web.WebServer;
 
 public class Cloud {
@@ -20,6 +21,8 @@ public class Cloud {
 			List<WebServer> webServers;
 			
 			webServers = new ArrayList<WebServer>();
+			
+			NodeID nodeId = new NodeID();
 			
 			while(true){
 				

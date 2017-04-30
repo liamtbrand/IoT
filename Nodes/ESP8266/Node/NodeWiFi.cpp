@@ -185,7 +185,7 @@ void NodeWiFi::setupLoop()
 void NodeWiFi::setup()
 {
   // Load in any stored connections.
-  //_APs.add("Liam's iPhone","derpderp");
+  _APs->add("Liam's iPhone","derpderp");
   _APs->add("SPARK-8GAY6T","TZXFK93XZC");
   _APs->load();
   _APs->list();
@@ -226,6 +226,6 @@ _Bool NodeWiFi::isConnected()
       return false;
     }
   }else if(_mode == 0){ // AP mode
-    
+
   }
 }

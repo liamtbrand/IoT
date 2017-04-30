@@ -49,7 +49,7 @@ public class Cloud {
 			while(true){
 				
 				if(deviceConns.hasConnection()){
-					SocketConnection sockConn = hubConns.getConnection();
+					SocketConnection sockConn = deviceConns.getConnection();
 					devices.add(new DeviceConnection(sockConn));
 					System.out.println("Device connected from: "+sockConn);
 				}

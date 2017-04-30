@@ -18,6 +18,10 @@ public class SocketConnection {
 		_in = new BufferedReader(new InputStreamReader(_clientSocket.getInputStream()));
 	}
 	
+	public String toString(){
+		return _clientSocket.getInetAddress()+":"+_clientSocket.getPort();
+	}
+	
 	public boolean hasMessage(){
 		try {
 			if(_in.ready()){

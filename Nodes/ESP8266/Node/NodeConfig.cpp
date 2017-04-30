@@ -7,7 +7,7 @@ NodeConfig::NodeConfig(const char* config_file)
   _ap_ssid = _nodeID;
   _ap_password = "IoT Setup";
 
-  _hubAddress = "192.168.1.4"; // HUB ADDRESS
+  _hubAddress = "172.20.10.5"; // HUB ADDRESS
   _hubPort = 9999;
 }
 

@@ -78,6 +78,13 @@ public class Cloud {
 					}
 				}
 				
+				try {
+					Thread.sleep(50); // TODO make this better. It was chewing cpu on the ec2 vm.
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
 			}
 			
 		} catch (IOException e) {

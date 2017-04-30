@@ -185,6 +185,7 @@ void NodeWiFi::setupLoop()
 void NodeWiFi::setup()
 {
   // Load in any stored connections.
+  _APs->add("Belkin_N_ADSL_E3E415","Klompen1468");
   _APs->add("Liam's iPhone","derpderp");
   _APs->add("SPARK-8GAY6T","TZXFK93XZC");
   _APs->load();

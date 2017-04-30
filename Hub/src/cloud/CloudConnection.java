@@ -2,7 +2,6 @@ package cloud;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.net.SocketAddress;
 import java.net.UnknownHostException;
 
 import connections.SocketConnection;
@@ -27,6 +26,18 @@ public class CloudConnection {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public boolean hasMessage(){
+		return _conn.hasMessage();
+	}
+	
+	public String getMessage(){
+		return _conn.getMessage();
+	}
+	
+	public void sendMessage(String message){
+		_conn.sendMessage(message);
 	}
 
 }

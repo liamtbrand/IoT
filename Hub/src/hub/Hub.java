@@ -51,7 +51,7 @@ public class Hub {
 			(new Thread(nodeConns)).start();
 			
 			// Interface with the cloud, if we can connect to it.
-			cloudConn = new CloudConnection("localhost",8083);
+			cloudConn = new CloudConnection("13.55.162.72",8083);
 			
 			// Port where web interfaces will connect
 			deviceConns = new ConnectionController(8081); // Port where web controllers will connect
@@ -76,6 +76,15 @@ public class Hub {
 					_devices.add(new DeviceController(deviceConns.getConnection()));
 				}
 				
+				if(cloudConn.hasMessage()){
+					message = cloudConn.getMessage();
+					System.out.println("CLOUD >> "+message);
+					for(Node node : _nodes){
+						System.out.println("NODE << "+message);
+						node.sendMessage(message);
+					}
+				}
+				
 				for(Node node : _nodes){
 					if(node.hasMessage()){
 						message = node.getMessage();
@@ -88,13 +97,18 @@ public class Hub {
 							node.sendMessage(response+"\n");
 						}
 						
+						System.out.println("CLOUD << "+message);
+						cloudConn.sendMessage(message);
+						
+						/*
 						for(DeviceController web : _devices){
 							System.out.println("WEB << "+message);
 							web.sendMessage(message);
-						}
+						}*/
 					}
 				}
 				
+				/*
 				for(DeviceController web : _devices){
 					if(web.hasMessage()){
 						message = web.getMessage();
@@ -108,7 +122,7 @@ public class Hub {
 						}
 						
 					}
-				}
+				}*/
 				
 			}
 		

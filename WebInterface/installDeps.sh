@@ -1,5 +1,5 @@
-curl --silent --location https://deb.nodesource.com/setup_6.x | sudo bash -
-sudo apt-get install --yes nodejs
+#curl --silent --location https://deb.nodesource.com/setup_6.x | sudo bash -
+#sudo apt-get install --yes nodejs
 
 npm install socket.io
 npm install --save express

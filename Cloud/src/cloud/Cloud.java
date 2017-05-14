@@ -11,7 +11,6 @@ import device.DeviceConnection;
 import hub.HubConnection;
 import node.NodeID;
 import rds.RDSConfigFile;
-import rds.RDSConfigFileException;
 import rds.RDSConnectionInfo;
 
 public class Cloud {
@@ -31,14 +30,17 @@ public class Cloud {
 			RDSConnectionInfo dbConnInfo = null;
 			try {
 				dbConnInfo = configFile.loadRDSConnectionInfo();
-				System.out.println("...");
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				System.out.println("oops");
 			}
 			
 			dbConn = new DBController(dbConnInfo); // TODO get this working.
+			
+			System.out.println(dbConn.getNodeName("0"));
+			for(String id : dbConn.getNodeIdsOwnedByUser(dbConn.getUserID("liamtbrand@gmail.com"))){
+				System.out.println(id);
+			}
 			
 			deviceConns = new ConnectionController(8082);
 			(new Thread(deviceConns)).start();
@@ -50,7 +52,6 @@ public class Cloud {
 			
 			List<DeviceConnection> devices;
 			List<HubConnection> hubs;
-			
 			
 			devices = new ArrayList<DeviceConnection>();
 			hubs = new ArrayList<HubConnection>();

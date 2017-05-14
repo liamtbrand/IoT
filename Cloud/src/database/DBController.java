@@ -1,9 +1,13 @@
 package database;
 
-public class DBController {
+import rds.RDSConnectionInfo;
 
-	public DBController(String address, int port){
-		
+public class DBController {
+	
+	private RDSConnectionInfo _dbConnInfo;
+
+	public DBController(RDSConnectionInfo dbConnInfo) {
+		_dbConnInfo = dbConnInfo;
 	}
 	
 }

@@ -10,7 +10,9 @@ import database.DBController;
 import device.DeviceConnection;
 import hub.HubConnection;
 import node.NodeID;
-import web.WebServer;
+import rds.RDSConfigFile;
+import rds.RDSConfigFileException;
+import rds.RDSConnectionInfo;
 
 public class Cloud {
 	
@@ -24,7 +26,19 @@ public class Cloud {
 		
 		try {
 			
-			dbConn = new DBController("localhost",3306); // TODO get this working.
+			// Create the RDS config file object and load in the configuration if it exists.
+			RDSConfigFile configFile = new RDSConfigFile("config/rds.config");
+			RDSConnectionInfo dbConnInfo = null;
+			try {
+				dbConnInfo = configFile.loadRDSConnectionInfo();
+				System.out.println("...");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				System.out.println("oops");
+			}
+			
+			dbConn = new DBController(dbConnInfo); // TODO get this working.
 			
 			deviceConns = new ConnectionController(8082);
 			(new Thread(deviceConns)).start();
@@ -45,6 +59,7 @@ public class Cloud {
 			
 			System.out.println("Testing service simply relays messages from devices to hubs and vice versa.");
 			System.out.println("Ready...");
+			
 			
 			while(true){
 				

@@ -52,6 +52,14 @@ void setup(void) {
   Serial.println("I support 2.4GHz Wireless... FYI.");
   randomSeed(analogRead(0));
 
+  lightController.setState(true);
+  delay(1000);
+  lightController.setState(false);
+  delay(1000);
+  lightController.setState(true);
+  delay(1000);
+  lightController.setState(false);
+
   Serial.println("WiFi Setup");
 
   nodeWiFi.setup();
@@ -84,16 +92,20 @@ void loop(void) {
       virtualSwitch.setState(false);
     }
   }
-
+  
   // TODO: If the hub cannot be connected to,
   // bind the physical switch to the virtual switch as a toggle.
 
   // If the wall switch has changed state, queue a notification.
   if(wallSwitch.hasChangedState()){
-    if(wallSwitch.readState()){
-      hubAPI.sendMessage(Message.SWITCH_ON);
+    if(hubAPI.isConnected()){
+      if(wallSwitch.readState()){
+        hubAPI.sendMessage(Message.SWITCH_ON);
+      }else{
+        hubAPI.sendMessage(Message.SWITCH_OFF);
+      }
     }else{
-      hubAPI.sendMessage(Message.SWITCH_OFF);
+      virtualSwitch.setState(wallSwitch.readState());
     }
   }
 

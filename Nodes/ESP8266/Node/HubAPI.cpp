@@ -12,6 +12,7 @@ HubAPI::HubAPI(const char* address, int port)
 {
   _address = address;
   _port = port;
+  _disconnected = true;
 }
 
 void HubAPI::connect()
@@ -39,10 +40,18 @@ String HubAPI::getMessage()
   return _messageInQueue.getNext();
 }
 
+_Bool HubAPI::isConnected()
+{
+  return !_disconnected;
+}
+
 void HubAPI::loop()
 {
   if(_disconnected){ // Try reconnect if we are disconnected.
-    connect();
+    if(abs(millis() - _lastReconnect) > _reconnectPeriod){
+      connect();
+      _lastReconnect = millis();
+    }
   }else{
 
     if(abs(millis() - _lastKeepAlivePacketSendTime) > _kaPacketPeriod){

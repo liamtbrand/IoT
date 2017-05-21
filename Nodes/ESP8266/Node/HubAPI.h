@@ -30,6 +30,8 @@ class HubAPI
     _Bool hasMessage();
     String getMessage();
 
+    _Bool isConnected();
+
     void loop();
 
   private:
@@ -53,6 +55,10 @@ class HubAPI
     // Last keepalive packet sent
     long int _lastKeepAlivePacketSendTime = 0;
     long int _kaPacketPeriod = 10000;
+
+    // Reconnect timeout
+    long int _lastReconnect = 0;
+    long int _reconnectPeriod = 20000;
 
 };
 
